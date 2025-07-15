@@ -1,0 +1,25 @@
+{
+  "forms": [
+    {
+      "name": "todo_widget",
+      "displayName": "$string:todo_widget_display_name",
+      "description": "$string:todo_widget_desc",
+      "src": "./ets/todo_widget/pages/Todo_widgetCard.ets",
+      "uiSyntax": "arkts",
+      "window": {
+        "designWidth": 720,
+        "autoDesignWidth": true
+      },
+      "colorMode": "auto",
+      "isDynamic": true,
+      "isDefault": true,
+      "updateEnabled": false,
+      "scheduledUpdateTime": "10:30",
+      "updateDuration": 1,
+      "defaultDimension": "2*2",
+      "supportDimensions": [
+        "2*2"
+      ]
+    }
+  ]
+}
