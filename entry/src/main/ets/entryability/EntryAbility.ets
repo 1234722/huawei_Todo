@@ -2,8 +2,11 @@ import { AbilityConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
+import storage from '@ohos.data.storage';
+import { preferences } from '@kit.ArkData';
 
 const TAG: string = 'EntryAbility';
+
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
@@ -11,6 +14,7 @@ export default class EntryAbility extends UIAbility {
   }
 
   onDestroy(): void {
+    this.context.eventHub.emit('onSaveEvent');
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onDestroy');
   }
 
@@ -25,6 +29,10 @@ export default class EntryAbility extends UIAbility {
       }
       let windowClass = windowStage.getMainWindowSync();
       AppStorage.setOrCreate('UIContext',windowClass.getUIContext());
+      // 获取上下文并存储
+      AppStorage.setOrCreate('Context', this.context)
+      let options: preferences.Options = { name: 'myStore' };
+      AppStorage.setOrCreate('Preferences', preferences.getPreferencesSync(AppStorage.get('context'), options))
       hilog.info(0x0000, 'testTag', 'Succeeded in loading the content. Data: %{public}s', JSON.stringify(data) ?? '');
     });
   }
