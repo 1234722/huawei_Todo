@@ -1,5 +1,4 @@
-//D:\download\huawei_Todo-master\huawei_Todo-master\entry\src\main\ets\pages\StatsPage.ets
-//需要在在 entry 目录下终端里执行ohpm install,
+//D:\download\huawei_Todo-master\huawei_Todo-master\entry\src\main\ets\pages\Index.ets
 import { VChart } from '@visactor/harmony-vchart'
 import { FocusRecord } from '../utils/FocusRecord'
 
@@ -103,7 +102,6 @@ struct StatsPage {
   }
 
   /* ---------- 数据聚合 ---------- */
-  //生成图表需要的数据结构
   private aggregate() {
     const now = new Date()
     const todayKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
@@ -171,8 +169,7 @@ struct StatsPage {
       const found = this.monthLineData.find(p => p.day === key)
       last7.push({
         day: `${d.getMonth() + 1}/${d.getDate()}`,           // X 轴标签
-        value: found ? found.value : i % 2 + 0.75
-        // 没数据就填 0, 先填2，等会记得改回来，这边只是在看看柱状图样式
+        value: found ? found.value : i % 2 + 0.75                      // 没数据就填 0, 先填2，等会记得改回来
       })
     }
 
@@ -200,7 +197,7 @@ struct StatsPage {
 
 
     /* --- 日线 --- */
-    //￥￥￥￥￥等会这里随机数的部分全删了，改为传入数据
+    //￥￥￥￥￥等会这里随机数的部分全删了，给为传入数据
     // ① 对 day‑level 数据做一次 map，给 value 加随机量
     const jittered: DayPoint[] = this.monthLineData.map(
       (p): DayPoint => {
@@ -298,13 +295,23 @@ struct StatsPage {
         /* --- 图表容器 --- */
         Stack() {
           /* 1️⃣ 先放到一个 Row 里 */
-          Row() {
-            VChart({ spec: this.barSpec })
-              .width('90%')      // 只占容器 90
-              .height(290)
+          Column(){
+            Text("周度数据")
+              .fontFamily('HarmonyHeiTi-Bold')
+              .width('100%')
+              .fontSize("12")
+              .margin({ left: 16, top: 8 })
+              .fontColor('#866EFA')
+              .fontWeight("700")
+            Row() {
+              VChart({ spec: this.barSpec })
+                .width('90%')      // 只占容器 90
+                .height(290)
+            }
+            .width('100%')
+            .justifyContent(FlexAlign.Center)   // 2️⃣ 横向居中
           }
-          .width('100%')
-          .justifyContent(FlexAlign.Center)   // 2️⃣ 横向居中
+
         }
         .backgroundColor('#FFFFFF')
         .borderRadius(16)
@@ -348,4 +355,3 @@ struct Card {
     .height(84)
   }
 }
-
