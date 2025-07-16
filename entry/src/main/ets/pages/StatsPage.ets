@@ -319,9 +319,18 @@ struct StatsPage {
         .margin({ top: 16 })
 
         Stack() {
-          VChart({ spec: this.monthLineSpec })
-            .width('100%')
-            .height(290)
+          Column() {
+            Text("月度数据")
+              .fontFamily('HarmonyHeiTi-Bold')
+              .width('100%')
+              .fontSize("12")
+              .margin({ left: 16, top: 8 })
+              .fontColor('#866EFA')
+              .fontWeight("700")
+            VChart({ spec: this.monthLineSpec })
+              .width('100%')
+              .height(290)
+          }
         }
         .backgroundColor('#FFFFFF')
         .borderRadius(16)
