@@ -32,7 +32,7 @@ export default class EntryAbility extends UIAbility {
       // 获取上下文并存储
       AppStorage.setOrCreate('Context', this.context)
       let options: preferences.Options = { name: 'myStore' };
-      AppStorage.setOrCreate('Preferences', preferences.getPreferencesSync(AppStorage.get('context'), options))
+      AppStorage.setOrCreate('Preferences', preferences.getPreferencesSync(this.context, options))
       hilog.info(0x0000, 'testTag', 'Succeeded in loading the content. Data: %{public}s', JSON.stringify(data) ?? '');
     });
   }
