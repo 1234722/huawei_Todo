@@ -4,28 +4,16 @@ import { preferences } from '@kit.ArkData';
 
 export class todoItem{
   title: string = ''
-  day: string = ''
+  date: string = ''
   startTime: string = ''
-  duration: string = ''
+  duration: number = 0
   experience: string = ''
-  state: string = ''
+  state: boolean = false
 }
 
-export class oneDayItem{
+export class oneDayItemList{
   totalTime: number = 0
-  waitItem: todoItem = new todoItem()
-  finishItem: todoItem = new todoItem()
-  NoDoneItem: todoItem = new todoItem()
+  totalCount: number = 0
+  waitItem: todoItem[] = []
+  finishItem: todoItem[] = []
 }
-
-
-let dataPreferences: preferences.Preferences | null = null;
-
-preferences.getPreferences(AppStorage.get('context'), 'myStore', (err: BusinessError, val: preferences.Preferences) => {
-  if (err) {
-    console.error("Failed to get preferences. code =" + err.code + ", message =" + err.message);
-    return;
-  }
-  dataPreferences = val;
-  console.info("Succeeded in getting preferences.");
-})

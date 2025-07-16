@@ -15,6 +15,7 @@ export default class EntryAbility extends UIAbility {
 
   onDestroy(): void {
     this.context.eventHub.emit('onSaveEvent');
+    this.context.eventHub.off('onSaveEvent');
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onDestroy');
   }
 
