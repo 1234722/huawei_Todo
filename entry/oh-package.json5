@@ -5,6 +5,9 @@
   "main": "",
   "author": "",
   "license": "",
-  "dependencies": {}
+  "dependencies": {
+    "@visactor/harmony-vchart": "^1.13.5"
+  },
+  "devDependencies": {},
+  "dynamicDependencies": {}
 }
-
