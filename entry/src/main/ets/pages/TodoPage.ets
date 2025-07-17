@@ -1,9 +1,17 @@
 import { todoUIState } from "../viewModel/todoUIstate"
+import { TomatoTimer } from "./component/LockPhone"
 
 @Preview
 @Component
 export struct TodoPage{
   @Link viewModel: todoUIState
+
+  onBackPress(): boolean {
+    if (!this.viewModel.timer.isRunning) {
+      return true // 拦截返回键
+    }
+    return false // 放行返回键
+  }
 
   build() {
     Column(){
@@ -29,21 +37,7 @@ export struct TodoPage{
       .height(80)
       .backgroundColor('#539EE1')
       .padding({top: 30})
-      Column() {
-        Text('进入深度专注模式（名字待定）')
-          .fontSize(18)
-          .fontColor('#333')
-          .margin({ bottom: 10 })
-        Text('点此进入锁机模式，开始专注')
-          .fontSize(14)
-          .fontColor('#666')
-      }
-      .width('100%')
-      .padding(20)
-      .backgroundColor('#ff4f6394')
-      .shadow({ radius: 8, color: '#1A000000' }) // 阴影效果
-      .margin({ top: 0 })
-
+      TomatoTimer({timer: this.viewModel.timer})
     }.width('100%')
     .height('100%')
     .alignItems(HorizontalAlign.Center)
