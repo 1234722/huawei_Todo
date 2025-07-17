@@ -45,17 +45,17 @@ export class todoUIState {
 
   private addForTable(item: todoItem){
     if (Object.keys(this.itemTable).includes(item.date)) {
-      this.itemTable[item.date].totalCount += 1
-      this.itemTable[item.date].totalTime += item.duration
       if (item.state) {
+        this.itemTable[item.date].totalCount += 1
+        this.itemTable[item.date].totalTime += item.duration
         this.itemTable[item.date].finishItem.push(item)
       } else {
         this.itemTable[item.date].waitItem.push(item)
       }
     } else {
       this.itemTable[item.date] = {
-        totalCount: 1,
-        totalTime: item.duration,
+        totalCount: item.state ? 1 : 0,
+        totalTime: item.state ? item.duration : 0,
         finishItem: item.state ? [item] : [],
         waitItem: item.state ? [] : [item]
       }
