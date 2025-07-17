@@ -1,7 +1,7 @@
 //待办展示
 
-import { todoItem } from '../model/TodoItem'
-import { sampleSelections } from '../model/TodoItem';//调用todo数据实例
+import { todoItem } from '../../model/TodoItem'
+import { sampleSelections } from '../../model/TodoItem'; //调用todo数据实例
 
 @Component
 export struct SelectionView {
