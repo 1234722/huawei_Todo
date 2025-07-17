@@ -64,7 +64,56 @@ export class todoUIState {
       }
     }
   }
+  private removeFromTable(item: todoItem) {
+    if (this.itemTable[item.date]) {
+      const dateGroup = this.itemTable[item.date];
+      dateGroup.totalCount -= 1;
+      dateGroup.totalTime -= item.duration;
 
+      if (item.state) {
+        // 从 finishItem 中移除（通过 filter 过滤匹配项）
+        dateGroup.finishItem = dateGroup.finishItem.filter(
+          i => !(i.title === item.title && i.startTime === item.startTime)
+        );
+      } else {
+        // 从 waitItem 中移除
+        dateGroup.waitItem = dateGroup.waitItem.filter(
+          i => !(i.title === item.title && i.startTime === item.startTime)
+        );
+      }
+      // 如果该日期的项目数为 0，则移除整个日期键（赋值为 undefined）
+      if (dateGroup.totalCount === 0) {
+        this.itemTable[item.date] = {
+          totalCount: 0,
+          totalTime: 0,
+          waitItem: [],
+          finishItem: []
+        };
+      }
+    }
+  }
+  //更新新新新新新新新新新新新新新
+  immediatelyfreshTotalTime(item: todoItem): void {
+    //更新tt，tc
+    this.totalTime += item.duration;
+    this.totalCount += 1;
+    //更新 itemTable
+    this.addForTable(item)
+  }
+  laterfreshTotalTime(item: todoItem):void{
+    // 1. 解析item中的时间（假设item.date格式为YYYY-MM-DD，item.startTime为HH:mm）
+    const targetDate = new Date(`${item.date}T${item.startTime}:00`);
+    const currentTime = new Date();
+
+    // 2. 计算时间差（毫秒）
+    const timeDiff = targetDate.getTime() - currentTime.getTime();
+
+    // 3. 如果时间已过，立即执行
+    if (timeDiff <= 0) {
+      this.immediatelyfreshTotalTime(item);
+      return;
+    }
+  }
   saveData(): void {
     this.pref.putSync('itemList', JSON.stringify(this.itemList));
     this.pref.flushSync();
@@ -97,9 +146,6 @@ export class todoUIState {
       this.addForTable(item)
     })
   }
-}
-
-
 }
 
 @Observed
