@@ -5,6 +5,8 @@ import { BusinessError } from "@kit.BasicServicesKit";
 
 @Observed
 export class todoUIState {
+  @Track totalTime: number = 0
+  @Track totalCount: number = 0
   @Track itemList: todoItem[] = []
   @Track itemTable: Record<string, oneDayItemList> = {}
   @Track isLoadState: boolean = true
@@ -27,6 +29,8 @@ export class todoUIState {
     this.loadData((itemList: todoItem[]) => {
       this.itemList = itemList
       itemList.forEach((item) => {
+        this.totalCount += 1
+        this.totalTime += item.duration
         this.addForTable(item)
       })
       this.isLoadState = true
