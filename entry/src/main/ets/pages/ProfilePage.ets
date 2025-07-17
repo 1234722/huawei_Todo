@@ -3,7 +3,7 @@ import { todoUIState } from "../viewModel/todoUIstate";
 @Preview
 @Component
 export struct ProfilePage {
-  // @Link viewModel: todoUIState
+  @Link viewModel: todoUIState
 
   build() {
     Column() {

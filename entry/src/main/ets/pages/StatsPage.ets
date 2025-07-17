@@ -1,73 +1,14 @@
 //D:\download\huawei_Todo-master\huawei_Todo-master\entry\src\main\ets\pages\Index.ets
 import { VChart } from '@visactor/harmony-vchart'
+import {
+  BarData,
+  BarShape,
+  BarSpec, BarValue, DayPoint, LineSpec, MonthPoint,
+  PaddingSpec,
+  PieData, PieSpec } from '../model/DateMapInterface';
 import { getFormattedDate } from '../utils/Date';
 import { FocusRecord } from '../utils/FocusRecord'
 import { todoUIState } from '../viewModel/todoUIstate';
-
-/* ---------- 基础数据类型 ---------- */
-interface DayPoint   { day:   string; value: number }
-interface MonthPoint { month: string; value: number }
-
-/* ---------- 图表数据接口 ---------- */
-interface PieValue  { name: string; value: number }
-interface PieData   { id: string; values: PieValue[] }
-
-interface BarValue  { day: string; value: number }
-interface BarData   { id: string; values: BarValue[] }
-
-interface LineData<T> { id: string; values: T[] }
-
-/* ---------- 图表 Spec 接口 ---------- */
-interface PieSpec {
-  type: 'pie'
-  outerRadius: string
-  data: PieData[]
-}
-
-interface BarSpec {
-  type: 'bar'
-  xField: string
-  yField: string
-  data: BarData[]
-  axes: AxisSpec[]
-  padding?: PaddingSpec
-  bar?: BarShape
-  barWidth?: number
-  barGapInGroup?: number
-}
-
-interface LineSpec<T> {
-  type: 'line'
-  xField: string
-  yField: string
-  smooth: boolean
-  data: LineData<T>[]
-}
-
-/* ---------- 辅助接口 ---------- */
-interface PaddingSpec {
-  top?: number
-  right?: number
-  bottom?: number
-  left?: number
-}
-
-type AxisOrient = 'left' | 'bottom'
-interface AxisSpec {
-  orient: AxisOrient
-  type?: 'band' | 'linear' | 'log' | string
-  paddingInner?: number
-  paddingOuter?: number
-}
-
-/* 柱子样式 */
-interface BarStyle {     // 颜色、圆角
-  fill?: string
-  radius?: number
-}
-interface BarShape {     // VChart 里 bar.style
-  style?: BarStyle
-}
 
 /* ---------- 页面组件 ---------- */
 @Entry
@@ -84,8 +25,8 @@ struct StatsPage {
   private totalMinutes = this.viewModel.totalTime / 60
   private avgPerDay    = this.totalMinutes/this.totalCount
 
-  private todayCount   = this.viewModel.itemTable[getFormattedDate(Date.now())].totalCount
-  private todayMinutes = this.viewModel.itemTable[getFormattedDate(Date.now())].totalTime / 60
+  private todayCount   = this.viewModel.itemTable[getFormattedDate()].totalCount
+  private todayMinutes = this.viewModel.itemTable[getFormattedDate()].totalTime / 60
   private todayGiveUp  = 0
 
   /* ---- 图表状态 ---- */
