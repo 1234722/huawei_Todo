@@ -1,4 +1,4 @@
-//D:\download\huawei_Todo-master\huawei_Todo-master\entry\src\main\ets\pages\Index.ets
+//entry\src\main\ets\pages\StatsPage.ets
 import { VChart } from '@visactor/harmony-vchart'
 import {
   BarData,
@@ -18,16 +18,20 @@ struct StatsPage {
   private records: FocusRecord[] = [
     { start: Date.now(), duration: 1, giveUp: false }   // ← 毫秒级时间戳, 取当前设备时间
   ]
-  @Link viewModel: todoUIState
+  @State viewModel: todoUIState = todoUIState.getInstance(getContext(this))
 
-  /* ---- 累计 / 今日指标 ---- */
+  /* ---------- 累计 / 今日指标 ---------- */
   private totalCount   = this.viewModel.totalCount
   private totalMinutes = this.viewModel.totalTime
-  private avgPerDay    = this.totalMinutes/this.totalCount
+  private avgPerDay    = this.totalCount > 0 ? this.totalMinutes / this.totalCount : 0   // 防 0 改为累计每次平均时间，但变量名未改
 
-  private todayCount   = this.viewModel.itemTable[getFormattedDate()].totalCount
-  private todayMinutes = this.viewModel.itemTable[getFormattedDate()].totalTime
-  private todayGiveUp  = 0
+  /* —— 今日 —— */
+  private todayKey     = getFormattedDate(Date.now())
+  private todayStats   = this.viewModel.itemTable[this.todayKey]   // 可能为 undefined
+
+  private todayCount   = this.todayStats?.totalCount ?? 0
+  private todayMinutes = (this.todayStats?.totalTime ?? 0)
+  private todayGiveUp  = this.todayMinutes > 0 ? this.todayMinutes / this.todayCount : 0    // 也改为今日每次平均时间，但变量名未改
 
   /* ---- 图表状态 ---- */
   @State pieSpec      : PieSpec           = { type: 'pie', outerRadius: '0%', data: [] }
@@ -100,30 +104,61 @@ struct StatsPage {
     }
 
     /* --- 最近 7 天柱图 --- */
-    const today = new Date()
+    const today   = new Date()
     const ONE_DAY = 24 * 60 * 60 * 1000
     const last7: BarValue[] = []
 
-    // 保证按时间顺序从 6 天前 → 今天
     for (let i = 6; i >= 0; i--) {
-      const d = new Date(today.getTime() - i * ONE_DAY)
-      const key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
+      const d       = new Date(today.getTime() - i * ONE_DAY)
+      const key     = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`   // 与 itemTable 的键一致
+      const stat    = this.viewModel.itemTable[key]            // 可能 undefined
+      const minutes = (stat?.totalTime ?? 0)               // 你存的是秒就 /60；若已是分钟可去掉 /60
 
-      // 在 monthLineData 里查有没有该天的专注分钟数
-      const found = this.monthLineData.find(p => p.day === key)
       last7.push({
-        day: `${d.getMonth() + 1}/${d.getDate()}`,           // X 轴标签
-        value: found ? found.value : i % 2 + 0.75                      // 没数据就填 0, 先填2，等会记得改回来
+        day:   `${d.getMonth() + 1}/${d.getDate()}`,           // X 轴标签
+        value: minutes                                          // Y 轴数值
       })
     }
 
     const barData: BarData[] = [
       { id: 'byDay', values: last7 }
     ]
-    const padding: PaddingSpec = { top: 16, right: 16, bottom: 24, left: 16 }
-    const barShape: BarShape = {      // ← 直接用 BarShape
+
+    const barShape: BarShape = {
       style: { fill: '#7E6BEA', radius: 0 }
     }
+
+    const barAnimation: AnimationNormalSpec = {
+      bar: [
+        {
+          loop: true,
+          startTime: 100,
+          oneByOne: 100,
+          timeSlices: [
+            {
+              delay: 1000,
+              effects: {
+                channel: {
+                  fillOpacity: { to: 0.5 }
+                },
+                easing: 'linear'
+              },
+              duration: 500
+            },
+            {
+              effects: {
+                channel: {
+                  fillOpacity: { to: 1 }
+                },
+                easing: 'linear'
+              },
+              duration: 500
+            }
+          ]
+        }
+      ]
+    }
+
 
     this.barSpec = {
       type: 'bar',
@@ -136,31 +171,44 @@ struct StatsPage {
         { orient: 'bottom', type: 'band', paddingInner: 0.4, paddingOuter: 0.05 }
       ],
       barWidth: 28,
-      bar: barShape
+      bar: barShape,
+      /* 🔽 把动画对象挂到 animationNormal 即可 */
+      animationNormal: barAnimation
     } as BarSpec
 
 
-    /* --- 日线 --- */
-    //￥￥￥￥￥等会这里随机数的部分全删了，给为传入数据
-    // ① 对 day‑level 数据做一次 map，给 value 加随机量
-    const jittered: DayPoint[] = this.monthLineData.map(
-      (p): DayPoint => {
-        const delta = Math.floor(Math.random() * 5)    // [0, 4]
-        return { day: p.day, value: p.value + delta }     // 已标注返回类型
-      }
-    )
+
+    /* --- 日线：本月每天的专注时长（分钟） --- */
+    const now     = new Date()
+    const year    = now.getFullYear()
+    const month   = now.getMonth() + 1                           // 1‑12
+    const daysInMonth = new Date(year, month, 0).getDate()       // 该月天数
+
+    // 生成 daysInMonth 的顺序数组
+    const monthPoints: DayPoint[] = []
+    for (let d = 1; d <= daysInMonth; d++) {
+      const key   = `${year}-${month}-${d}`                      // 与 itemTable 的键保持一致
+      const stat  = this.viewModel.itemTable[key]                // 可能为 undefined
+      const minutes = (stat?.totalTime ?? 0)               // 若已存分钟可去掉 /60
+
+      monthPoints.push({
+        day:   `${month}/${d}`,                                   // X 轴标签：MM/DD
+        value: minutes                                            // Y 轴：当天分钟数
+      })
+    }
+
+    this.monthLineData = monthPoints
+
     this.monthLineSpec = {
       type: 'line',
       xField: 'day',
       yField: 'value',
       smooth: true,
       data: [
-        {
-          id: 'daily',
-          values: jittered        // ② 用抖动后的数组
-        }
+        { id: 'daily', values: this.monthLineData }
       ]
-    }
+    } as LineSpec<DayPoint>
+
 
     /* --- 月线 --- */
     this.yearLineSpec = {
@@ -201,7 +249,7 @@ struct StatsPage {
             Card({ title: '次数', value: `${this.totalCount}`,   sub: '' }).layoutWeight(1)
             //.margin({ left: 64, top: 4 })
             Card({ title: '时长', value: `${this.totalMinutes}`, sub: '分钟' }).layoutWeight(1)
-            Card({ title: '日均', value: `${this.avgPerDay}`,    sub: '分钟' }).layoutWeight(1)
+            Card({ title: '平均', value: `${this.avgPerDay}`,    sub: '分钟' }).layoutWeight(1)
           }
         }
         .width('100%')
@@ -224,7 +272,7 @@ struct StatsPage {
               .layoutWeight(0.7)
             Card({ title: '次数', value: `${this.todayCount}`, sub: '' }).layoutWeight(1)
             Card({ title: '时长', value: `${this.todayMinutes}`, sub: '分钟' }).layoutWeight(1)
-            Card({ title: '放弃', value: `${this.todayGiveUp}`, sub: '次数' }).layoutWeight(1)
+            Card({ title: '平均', value: `${this.todayGiveUp}`, sub: '次数' }).layoutWeight(1)
           }
         }
         .width('100%')
