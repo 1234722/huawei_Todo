@@ -1,5 +1,4 @@
 import { oneDayItemList, todoItem } from "../model/TodoItem";
-import { getData, saveData } from "../utils/dataStorage";
 import { preferences } from "@kit.ArkData";
 import { BusinessError } from "@kit.BasicServicesKit";
 import { getFormattedTime, toggleTimer } from "../utils/DateTimeUtils";
@@ -39,6 +38,8 @@ export class todoUIState {
     })
   }
 
+
+
   addItem(item: todoItem) {
     this.itemList.push(item)
     this.addForTable(item)
@@ -69,7 +70,7 @@ export class todoUIState {
   }
 
   private loadData(callback: (result: todoItem[]) => void) {
-    this.pref.get('itemList', 'default', (err: BusinessError, val: preferences.ValueType) => {
+    this.pref.get('itemList', '[]', (err: BusinessError, val: preferences.ValueType) => {
       if (err) {
         console.error("Failed to get value of 'startup'. code =" + err.code + ", message =" + err.message);
         return;

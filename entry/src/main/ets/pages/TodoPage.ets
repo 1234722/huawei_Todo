@@ -6,14 +6,6 @@ import { TomatoTimer } from "./component/LockPhone"
 export struct TodoPage{
   @Link viewModel: todoUIState
 
-  onBackPress(): boolean {
-    console.log('test')
-    if (!this.viewModel.timer.isRunning) {
-      return true // 拦截返回键
-    }
-    return false // 放行返回键
-  }
-
   build() {
     Column(){
       RelativeContainer(){

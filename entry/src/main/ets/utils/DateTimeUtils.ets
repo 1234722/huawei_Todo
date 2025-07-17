@@ -36,7 +36,6 @@ export function toggleTimer(duration: number, onSeconds: (now: number) => void =
     if (remainingTime <= 0) {
       clearInterval(timerId) // 清除计时器
       onEnd()
-
     }
   }, 1000) // 设置定时器间隔为1秒
 }

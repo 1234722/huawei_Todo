@@ -12,6 +12,13 @@ struct Index {
   private breakpointSystem: BreakpointSystem = new BreakpointSystem();
   @State viewModel: todoUIState = todoUIState.getInstance(AppStorage.get('Context') as Context);
 
+  onBackPress(): boolean {
+    if (this.viewModel.timer.isRunning) {
+      return true // 拦截返回键
+    }
+    return false // 放行返回键
+  }
+
   aboutToAppear() {
     const context = AppStorage.get('Context') as Context
     // 注册持久化保存监听
