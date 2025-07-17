@@ -96,15 +96,12 @@ export class todoUIState {
   }
 }
 
-
-
 @Observed
 export class timer{
   @Track focusMinutes: number = 25
   @Track showSeconds: number = 25 * 60
   @Track isRunning: boolean = false
   @Track ringColor: Color = Color.Blue
-  private timeUpdateId: number = -1
 
   startTimer() {
     this.isRunning = true // 设置计时器状态为暂停
@@ -130,8 +127,4 @@ export class timer{
     this.showSeconds = minutes * 60
   }
 
-}
-
-function ebug(arg0: string): string {
-  throw new Error("Function not implemented.");
 }

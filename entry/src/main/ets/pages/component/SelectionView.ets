@@ -25,6 +25,7 @@ export struct SelectionView {
   }
 }
 
+@Preview
 @Component
 struct SelectionItem {
   @Prop selectionItem: todoItem;
@@ -50,6 +51,7 @@ struct SelectionItem {
         }
       }
       .layoutWeight(1)
+      .alignItems(HorizontalAlign.Start)
 
 
       Text('开始')
@@ -59,7 +61,7 @@ struct SelectionItem {
         .margin({ top: 7, right: 12 })
     }
     .width('100%')
-    .height(90)
+    .height(70)
     .borderRadius(8)
     .backgroundColor('#539EE1')
     .padding(16)

@@ -8,10 +8,9 @@ import { SelectionView } from "./component/SelectionView"
 export struct TodoPage{
   @Link viewModel: todoUIState
 
-  dialogController: CustomDialogController = new CustomDialogController({
+  dialog2Controller: CustomDialogController = new CustomDialogController({
     builder: addDialog()
   })
-
 
   onBackPress(): boolean {
     console.log('test')
@@ -39,7 +38,7 @@ export struct TodoPage{
           .height(30)
           .fillColor($r('app.color.white'))
           .onClick(() => {
-
+            this.dialog2Controller.open()
           })
       }.width('100%')
       .height(80)

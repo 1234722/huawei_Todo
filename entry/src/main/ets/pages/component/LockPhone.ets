@@ -1,9 +1,18 @@
 import { formatTime, getFormattedTime } from '../../utils/DateTimeUtils'
 import { timer } from '../../viewModel/todoUIstate'
+import { customDialog } from './AddDialog'
 
 @Component
 export struct TomatoTimer {
   @ObjectLink timer: timer
+
+  dialog3Controller: CustomDialogController = new CustomDialogController({
+    builder: customDialog({
+        onValueChange: (value) => {
+          this.timer.focusMinutes = value
+        }
+      })
+  })
 
   build() {
     Column() {
@@ -56,10 +65,10 @@ export struct TomatoTimer {
             .width(90)
             .margin(5)
 
-          Button('5分钟', { type: ButtonType.Capsule, stateEffect: true })
-            .backgroundColor(this.timer.focusMinutes === 5 ? '#5B8FF9' : '#F0F0F0')
-            .fontColor(this.timer.focusMinutes === 5 ? Color.White : '#333')
-            .onClick(() => this.timer.setFocusTime(1))
+          Button('自定义', { type: ButtonType.Capsule, stateEffect: true })
+            .backgroundColor('#F0F0F0')
+            .fontColor('#333')
+            .onClick(this.dialog3Controller.open())
             .width(90)
             .margin(5)
         }
