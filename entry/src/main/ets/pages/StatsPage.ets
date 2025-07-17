@@ -34,6 +34,8 @@ interface BarSpec {
   bar?: BarShape
   barWidth?: number
   barGapInGroup?: number
+
+  animationNormal?: AnimationNormalSpec
 }
 
 interface LineSpec<T> {
@@ -68,6 +70,39 @@ interface BarStyle {     // 颜色、圆角
 interface BarShape {     // VChart 里 bar.style
   style?: BarStyle
 }
+//柱状图的动画用的
+/* ---------- 动画类型 ---------- */
+interface OpacityKeyframe {
+  to: number          // 目标透明度
+}
+
+interface ChannelEffects {
+  fillOpacity?: OpacityKeyframe
+}
+
+interface AnimationEffect {
+  channel?: ChannelEffects
+  easing?: string
+}
+
+interface TimeSlice {
+  delay?: number
+  effects: AnimationEffect
+  duration: number
+}
+
+interface BarAnimationItem {
+  loop?: boolean
+  startTime?: number
+  oneByOne?: number
+  timeSlices: TimeSlice[]
+}
+
+/* 整体动画规范：目前只声明 bar，但可拓展 line、area… */
+interface AnimationNormalSpec {
+  bar: BarAnimationItem[]
+}
+
 
 /* ---------- 页面组件 ---------- */
 @Entry
@@ -82,7 +117,7 @@ struct StatsPage {
   /* ---------- 累计 / 今日指标 ---------- */
   private totalCount   = this.viewModel.totalCount
   private totalMinutes = this.viewModel.totalTime
-  private avgPerDay    = this.totalCount > 0 ? this.totalMinutes / this.totalCount : 0   // 防 0
+  private avgPerDay    = this.totalCount > 0 ? this.totalMinutes / this.totalCount : 0   // 防 0 改为累计每次平均时间，但变量名未改
 
   /* —— 今日 —— */
   private todayKey     = getFormattedDate(Date.now())
@@ -90,7 +125,7 @@ struct StatsPage {
 
   private todayCount   = this.todayStats?.totalCount ?? 0
   private todayMinutes = (this.todayStats?.totalTime ?? 0)
-  private todayGiveUp  = this.todayMinutes > 0 ? this.todayMinutes / this.todayCount : 0    // 也改为每次平均时间，但变量名未改
+  private todayGiveUp  = this.todayMinutes > 0 ? this.todayMinutes / this.todayCount : 0    // 也改为今日每次平均时间，但变量名未改
 
   /* ---- 图表状态 ---- */
   @State pieSpec      : PieSpec           = { type: 'pie', outerRadius: '0%', data: [] }
@@ -187,6 +222,38 @@ struct StatsPage {
       style: { fill: '#7E6BEA', radius: 0 }
     }
 
+    const barAnimation: AnimationNormalSpec = {
+      bar: [
+        {
+          loop: true,
+          startTime: 100,
+          oneByOne: 100,
+          timeSlices: [
+            {
+              delay: 1000,
+              effects: {
+                channel: {
+                  fillOpacity: { to: 0.5 }
+                },
+                easing: 'linear'
+              },
+              duration: 500
+            },
+            {
+              effects: {
+                channel: {
+                  fillOpacity: { to: 1 }
+                },
+                easing: 'linear'
+              },
+              duration: 500
+            }
+          ]
+        }
+      ]
+    }
+
+
     this.barSpec = {
       type: 'bar',
       xField: 'day',
@@ -198,7 +265,9 @@ struct StatsPage {
         { orient: 'bottom', type: 'band', paddingInner: 0.4, paddingOuter: 0.05 }
       ],
       barWidth: 28,
-      bar: barShape
+      bar: barShape,
+      /* 🔽 把动画对象挂到 animationNormal 即可 */
+      animationNormal: barAnimation
     } as BarSpec
 
 
@@ -297,7 +366,7 @@ struct StatsPage {
               .layoutWeight(0.7)
             Card({ title: '次数', value: `${this.todayCount}`, sub: '' }).layoutWeight(1)
             Card({ title: '时长', value: `${this.todayMinutes}`, sub: '分钟' }).layoutWeight(1)
-            Card({ title: '放弃', value: `${this.todayGiveUp}`, sub: '次数' }).layoutWeight(1)
+            Card({ title: '平均', value: `${this.todayGiveUp}`, sub: '次数' }).layoutWeight(1)
           }
         }
         .width('100%')
