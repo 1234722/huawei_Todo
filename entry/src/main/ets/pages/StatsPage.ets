@@ -26,7 +26,7 @@ struct StatsPage {
   private avgPerDay    = this.totalCount > 0 ? this.totalMinutes / this.totalCount : 0   // 防 0 改为累计每次平均时间，但变量名未改
 
   /* —— 今日 —— */
-  private todayKey     = getFormattedDate(Date.now())
+  private todayKey     = getFormattedDate()
   private todayStats   = this.viewModel.itemTable[this.todayKey]   // 可能为 undefined
 
   private todayCount   = this.todayStats?.totalCount ?? 0
