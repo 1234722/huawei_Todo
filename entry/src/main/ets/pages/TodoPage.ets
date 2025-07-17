@@ -1,6 +1,10 @@
+import { todoUIState } from "../viewModel/todoUIstate"
+
 @Preview
 @Component
 export struct TodoPage{
+  @Link viewModel: todoUIState
+
   build() {
     Column(){
       RelativeContainer(){

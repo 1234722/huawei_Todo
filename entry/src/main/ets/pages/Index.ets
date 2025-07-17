@@ -1,4 +1,5 @@
 import { BreakpointSystem, BreakpointTypeEnum } from '../utils/BreakpointSystem';
+import { todoUIState } from '../viewModel/todoUIstate';
 import { ProfilePage } from './ProfilePage';
 import { TodoPage } from './TodoPage';
 
@@ -9,8 +10,14 @@ struct Index {
   @State currentIndex: number = 0;
   private tabsController: TabsController = new TabsController();
   private breakpointSystem: BreakpointSystem = new BreakpointSystem();
+  @State viewModel: todoUIState = todoUIState.getInstance(AppStorage.get('Context') as Context);
 
   aboutToAppear() {
+    const context = AppStorage.get('Context') as Context
+    // 注册持久化保存监听
+    context.eventHub.on('onSaveEvent', () => {
+      this.viewModel.saveData();
+    });
     this.breakpointSystem.register();
   }
 
@@ -51,12 +58,12 @@ struct Index {
       controller: this.tabsController
     }) {
       TabContent() {
-        TodoPage()
+        TodoPage({viewModel: this.viewModel})
       }
       .tabBar(this.tabBarBuilder('待办', 0, $r("app.media.format_list_checks")))
 
       TabContent() {
-        ProfilePage()
+        ProfilePage({viewModel: this.viewModel})
       }
       .tabBar(this.tabBarBuilder('我的', 1, $r("app.media.account_outline")))
     }
