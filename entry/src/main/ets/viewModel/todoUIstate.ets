@@ -1,3 +1,4 @@
+//entry\src\main\ets\viewModel\todoUIstate.ets
 import { oneDayItemList, todoItem } from "../model/TodoItem";
 import { getData, saveData } from "../utils/dataStorage";
 import { preferences } from "@kit.ArkData";
@@ -79,4 +80,20 @@ export class todoUIState {
       }
     })
   }
+
+  initWithSampleData(list: todoItem[]) {
+    this.itemList   = []
+    this.itemTable  = {}
+    this.totalCount = 0
+    this.totalTime  = 0
+
+    list.forEach(item => {
+      this.itemList.push(item)
+      this.totalCount += 1
+      this.totalTime  += item.duration
+      this.addForTable(item)
+    })
+  }
 }
+
+
