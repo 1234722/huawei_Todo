@@ -23,3 +23,20 @@ export function formatTime(seconds: number): string {
   const secs = seconds % 60
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
 }
+
+export function toggleTimer(duration: number, onSeconds: (now: number) => void = () => {}, onEnd: () => void = () => {}) {
+  let remainingTime: number = duration
+  let lastTickTime: number = 0
+  let timerId = setInterval(() => {
+    const now = new Date().getTime() // 获取当前时间
+    const elapsed = lastTickTime > 0 ? Math.floor((now - lastTickTime) / 1000) : 1 // 计算经过的秒数
+    remainingTime = Math.max(0, remainingTime - elapsed) // 更新剩余时间
+    onSeconds(remainingTime)
+    lastTickTime = now // 更新最后记录时间
+    if (remainingTime <= 0) {
+      clearInterval(timerId) // 清除计时器
+      onEnd()
+
+    }
+  }, 1000) // 设置定时器间隔为1秒
+}

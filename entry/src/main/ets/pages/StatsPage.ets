@@ -6,7 +6,7 @@ import {
   BarSpec, BarValue, DayPoint, LineSpec, MonthPoint,
   PaddingSpec,
   PieData, PieSpec } from '../model/DateMapInterface';
-import { getFormattedDate } from '../utils/Date';
+import { getFormattedDate } from '../utils/DateTimeUtils';
 import { FocusRecord } from '../utils/FocusRecord'
 import { todoUIState } from '../viewModel/todoUIstate';
 
@@ -22,11 +22,11 @@ struct StatsPage {
 
   /* ---- 累计 / 今日指标 ---- */
   private totalCount   = this.viewModel.totalCount
-  private totalMinutes = this.viewModel.totalTime / 60
+  private totalMinutes = this.viewModel.totalTime
   private avgPerDay    = this.totalMinutes/this.totalCount
 
   private todayCount   = this.viewModel.itemTable[getFormattedDate()].totalCount
-  private todayMinutes = this.viewModel.itemTable[getFormattedDate()].totalTime / 60
+  private todayMinutes = this.viewModel.itemTable[getFormattedDate()].totalTime
   private todayGiveUp  = 0
 
   /* ---- 图表状态 ---- */

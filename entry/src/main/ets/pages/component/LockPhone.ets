@@ -1,4 +1,4 @@
-import { formatTime, getFormattedTime } from '../../utils/Date'
+import { formatTime, getFormattedTime } from '../../utils/DateTimeUtils'
 import { timer } from '../../viewModel/todoUIstate'
 
 @Component
@@ -19,14 +19,14 @@ export struct TomatoTimer {
         .shadow({ radius: 10, color: Color.Gray, offsetX: 0, offsetY: 5 })
 
         // 倒计时显示
-        Text(formatTime(this.timer.remainingSeconds))
+        Text(formatTime(this.timer.showSeconds))
           .fontSize(36)
           .fontWeight(FontWeight.Bold)
           .fontColor("#333")
 
         // 进度条
         Progress({
-          value: 1 - (this.timer.remainingSeconds / (this.timer.focusMinutes * 60)),
+          value: 100 - (this.timer.showSeconds / (this.timer.focusMinutes * 60)) * 100,
           style: ProgressStyle.Ring
         })
           .width(150)
@@ -38,15 +38,6 @@ export struct TomatoTimer {
       .height(160)
       // .margin({ bottom: 30 })
       .alignContent(Alignment.Center)
-
-      // 完成提示
-      if (this.timer.showCompletion) {
-        Text('时间到，可以适当休息')
-          .fontSize(20)
-          .fontColor(Color.Green)
-          .margin({ bottom: 20 })
-          .opacity(0.9)
-      }
 
       if(!this.timer.isRunning){
         // 时间设置按钮
@@ -68,7 +59,7 @@ export struct TomatoTimer {
           Button('5分钟', { type: ButtonType.Capsule, stateEffect: true })
             .backgroundColor(this.timer.focusMinutes === 5 ? '#5B8FF9' : '#F0F0F0')
             .fontColor(this.timer.focusMinutes === 5 ? Color.White : '#333')
-            .onClick(() => this.timer.setFocusTime(5))
+            .onClick(() => this.timer.setFocusTime(1))
             .width(90)
             .margin(5)
         }
@@ -79,7 +70,7 @@ export struct TomatoTimer {
           .fontColor(Color.White)
           .width(120)
           .height(40)
-          .onClick(() => this.timer.toggleTimer())
+          .onClick(() => {this.timer.startTimer()})
       }
     }
     .width('100%')

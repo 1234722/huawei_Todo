@@ -2,7 +2,7 @@ import { oneDayItemList, todoItem } from "../model/TodoItem";
 import { getData, saveData } from "../utils/dataStorage";
 import { preferences } from "@kit.ArkData";
 import { BusinessError } from "@kit.BasicServicesKit";
-import { getFormattedTime } from "../utils/Date";
+import { getFormattedTime, toggleTimer } from "../utils/DateTimeUtils";
 
 @Observed
 export class todoUIState {
@@ -86,76 +86,37 @@ export class todoUIState {
 @Observed
 export class timer{
   @Track focusMinutes: number = 25
-  @Track remainingSeconds: number = 25 * 60
+  @Track showSeconds: number = 25 * 60
   @Track isRunning: boolean = false
-  @Track timerId: number = -1
-  @Track showCompletion: boolean = false
-  @Track ringColor: Color = Color.Black
-  private lastTickTime: number = 0
+  @Track ringColor: Color = Color.Blue
   private timeUpdateId: number = -1
 
-  // 开始/暂停计时器
-  toggleTimer() {
-    if (this.isRunning) {
-      // 暂停计时器
-      if (this.timerId !== -1) {
-        clearInterval(this.timerId)
-        this.timerId = -1
+  startTimer() {
+    this.isRunning = true // 设置计时器状态为暂停
+    toggleTimer(this.showSeconds,(now: number) => {
+      this.showSeconds = now
+      if (this.showSeconds <= 0) {
+        this.ringColor = Color.Green; // 设置颜色为绿色
+      } else if (this.showSeconds < this.focusMinutes * 60 * 0.25) {
+        this.ringColor = Color.Red; // 设置颜色为红色
+      } else if (this.showSeconds < this.focusMinutes * 60 * 0.5) {
+        this.ringColor = Color.Orange; // 设置颜色为橙色
       }
-      this.isRunning = false
-    } else {
-      // 开始计时器
-      if (this.showCompletion) {
-        this.showCompletion = false
-        this.remainingSeconds = this.focusMinutes * 60
-      }
-
-      this.isRunning = true
-      this.lastTickTime = new Date().getTime()
-      this.timerId = setInterval(() => {
-        const now = new Date().getTime()
-        const elapsed = this.lastTickTime > 0 ? Math.floor((now - this.lastTickTime)/1000) : 1
-        this.remainingSeconds = Math.max(0, this.remainingSeconds - elapsed)
-        this.lastTickTime = now
-
-        // 根据剩余时间改变进度条颜色
-        if (this.remainingSeconds < this.focusMinutes * 60 * 0.25) {
-          this.ringColor = Color.Red
-        } else if (this.remainingSeconds < this.focusMinutes * 60 * 0.5) {
-          this.ringColor = Color.Orange
-        }
-
-        if (this.remainingSeconds <= 0) {
-          clearInterval(this.timerId)
-          this.timerId = -1
-          this.isRunning = false
-          this.showCompletion = true
-          this.ringColor = Color.Green
-        }
-      }, 1000)
-    }
-  }
-
-  // 重置计时器
-  resetTimer() {
-    if (this.timerId !== -1) {
-      clearInterval(this.timerId)
-      this.timerId = -1
-    }
-    this.isRunning = false
-    this.showCompletion = false
-    this.remainingSeconds = this.focusMinutes * 60
-    this.ringColor = Color.Blue
+    },() => {
+      this.isRunning = false // 设置计时器状态为暂停
+      this.ringColor = Color.Green // 设置颜色为绿色
+      this.showSeconds = this.focusMinutes * 60
+    })
   }
 
   // 设置专注时间
   setFocusTime(minutes: number) {
     this.focusMinutes = minutes
-    this.resetTimer()
+    this.showSeconds = minutes * 60
   }
 
-  clearTimer(){
-    if (this.timerId !== -1) clearInterval(this.timerId)
-    if (this.timeUpdateId !== -1) clearInterval(this.timeUpdateId)
-  }
+}
+
+function ebug(arg0: string): string {
+  throw new Error("Function not implemented.");
 }

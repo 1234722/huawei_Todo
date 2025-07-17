@@ -7,6 +7,7 @@ export struct TodoPage{
   @Link viewModel: todoUIState
 
   onBackPress(): boolean {
+    console.log('test')
     if (!this.viewModel.timer.isRunning) {
       return true // 拦截返回键
     }
