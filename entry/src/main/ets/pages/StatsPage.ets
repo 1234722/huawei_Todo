@@ -1,6 +1,8 @@
 //D:\download\huawei_Todo-master\huawei_Todo-master\entry\src\main\ets\pages\Index.ets
 import { VChart } from '@visactor/harmony-vchart'
+import { getFormattedDate } from '../utils/Date';
 import { FocusRecord } from '../utils/FocusRecord'
+import { todoUIState } from '../viewModel/todoUIstate';
 
 /* ---------- 基础数据类型 ---------- */
 interface DayPoint   { day:   string; value: number }
@@ -75,14 +77,15 @@ struct StatsPage {
   private records: FocusRecord[] = [
     { start: Date.now(), duration: 1, giveUp: false }   // ← 毫秒级时间戳, 取当前设备时间
   ]
+  @Link viewModel: todoUIState
 
   /* ---- 累计 / 今日指标 ---- */
-  private totalCount   = 1
-  private totalMinutes = 1
-  private avgPerDay    = 1
+  private totalCount   = this.viewModel.totalCount
+  private totalMinutes = this.viewModel.totalTime / 60
+  private avgPerDay    = this.totalMinutes/this.totalCount
 
-  private todayCount   = 1
-  private todayMinutes = 1
+  private todayCount   = this.viewModel.itemTable[getFormattedDate(Date.now())].totalCount
+  private todayMinutes = this.viewModel.itemTable[getFormattedDate(Date.now())].totalTime / 60
   private todayGiveUp  = 0
 
   /* ---- 图表状态 ---- */
