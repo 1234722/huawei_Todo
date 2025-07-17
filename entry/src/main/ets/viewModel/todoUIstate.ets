@@ -2,7 +2,7 @@
 import { oneDayItemList, todoItem } from "../model/TodoItem";
 import { preferences } from "@kit.ArkData";
 import { BusinessError } from "@kit.BasicServicesKit";
-import { getFormattedTime, toggleTimer } from "../utils/DateTimeUtils";
+import { formatTime, getFormattedTime, timeToSeconds, toggleTimer } from "../utils/DateTimeUtils";
 
 @Observed
 export class todoUIState {
@@ -64,7 +64,7 @@ export class todoUIState {
       }
     }
   }
-  private removeFromTable(item: todoItem) {
+  private removeFromTable(item: todoItem): void {
     if (this.itemTable[item.date]) {
       const dateGroup = this.itemTable[item.date];
       dateGroup.totalCount -= 1;
@@ -93,27 +93,37 @@ export class todoUIState {
     }
   }
   //更新新新新新新新新新新新新新新
-  immediatelyfreshTotalTime(item: todoItem): void {
+   immediatelyfreshTotalTime(item: todoItem): void {
     //更新tt，tc
     this.totalTime += item.duration;
     this.totalCount += 1;
     //更新 itemTable
     this.addForTable(item)
+     toggleTimer(item.duration,undefined,() => this.removeFromTable(item));//第二部分，定时器
   }
-  laterfreshTotalTime(item: todoItem):void{
-    // 1. 解析item中的时间（假设item.date格式为YYYY-MM-DD，item.startTime为HH:mm）
+  //
+   laterfreshTotalTime(item: todoItem):void{
+    // 解析item中的时间（假设item.date格式为YYYY-MM-DD，item.startTime为HH:mm）
     const targetDate = new Date(`${item.date}T${item.startTime}:00`);
     const currentTime = new Date();
 
-    // 2. 计算时间差（毫秒）
+    // 计算时间差
     const timeDiff = targetDate.getTime() - currentTime.getTime();
 
-    // 3. 如果时间已过，立即执行
+    // 如果时间已过，即时执行
     if (timeDiff <= 0) {
       this.immediatelyfreshTotalTime(item);
       return;
     }
   }
+  whenadd(item: todoItem){
+    toggleTimer(timeToSeconds(item.startTime)-timeToSeconds(getFormattedTime()),undefined,() => this.immediatelyfreshTotalTime(item));//创建出了定时器
+    formatTime(item.duration);//数据显示
+    //toggleTimer(item.duration,onsecond(11),this.immediatelyfreshTotalTime(item));
+    toggleTimer(item.duration);
+
+  }
+
   saveData(): void {
     this.pref.putSync('itemList', JSON.stringify(this.itemList));
     this.pref.flushSync();
