@@ -3,6 +3,7 @@ import { oneDayItemList, todoItem } from "../model/TodoItem";
 import { getData, saveData } from "../utils/dataStorage";
 import { preferences } from "@kit.ArkData";
 import { BusinessError } from "@kit.BasicServicesKit";
+import { getFormattedTime, toggleTimer } from "../utils/DateTimeUtils";
 
 @Observed
 export class todoUIState {
@@ -11,6 +12,7 @@ export class todoUIState {
   @Track itemList: todoItem[] = []
   @Track itemTable: Record<string, oneDayItemList> = {}
   @Track isLoadState: boolean = true
+  @Track timer: timer = new timer()
   private static instance: todoUIState;
   private dataKey = 'todo_data';
   private pref: preferences.Preferences;
@@ -97,3 +99,42 @@ export class todoUIState {
 }
 
 
+}
+
+@Observed
+export class timer{
+  @Track focusMinutes: number = 25
+  @Track showSeconds: number = 25 * 60
+  @Track isRunning: boolean = false
+  @Track ringColor: Color = Color.Blue
+  private timeUpdateId: number = -1
+
+  startTimer() {
+    this.isRunning = true // 设置计时器状态为暂停
+    toggleTimer(this.showSeconds,(now: number) => {
+      this.showSeconds = now
+      if (this.showSeconds <= 0) {
+        this.ringColor = Color.Green; // 设置颜色为绿色
+      } else if (this.showSeconds < this.focusMinutes * 60 * 0.25) {
+        this.ringColor = Color.Red; // 设置颜色为红色
+      } else if (this.showSeconds < this.focusMinutes * 60 * 0.5) {
+        this.ringColor = Color.Orange; // 设置颜色为橙色
+      }
+    },() => {
+      this.isRunning = false // 设置计时器状态为暂停
+      this.ringColor = Color.Green // 设置颜色为绿色
+      this.showSeconds = this.focusMinutes * 60
+    })
+  }
+
+  // 设置专注时间
+  setFocusTime(minutes: number) {
+    this.focusMinutes = minutes
+    this.showSeconds = minutes * 60
+  }
+
+}
+
+function ebug(arg0: string): string {
+  throw new Error("Function not implemented.");
+}
