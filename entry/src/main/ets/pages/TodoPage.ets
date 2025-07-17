@@ -1,6 +1,5 @@
 import { todoUIState } from "../viewModel/todoUIstate"
 import { TomatoTimer } from "./component/LockPhone"
-
 @Preview
 @Component
 export struct TodoPage{

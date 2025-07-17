@@ -2,7 +2,6 @@ import { BreakpointSystem, BreakpointTypeEnum } from '../utils/BreakpointSystem'
 import { todoUIState } from '../viewModel/todoUIstate';
 import { ProfilePage } from './ProfilePage';
 import { TodoPage } from './TodoPage';
-
 @Entry
 @Component
 struct Index {
