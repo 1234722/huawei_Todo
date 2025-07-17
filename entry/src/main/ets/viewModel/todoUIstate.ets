@@ -14,7 +14,6 @@ export class todoUIState {
   @Track isLoadState: boolean = true
   @Track timer: timer = new timer()
   private static instance: todoUIState;
-  private dataKey = 'todo_data';
   private pref: preferences.Preferences;
 
   static getInstance(context: Context): todoUIState {
@@ -99,7 +98,6 @@ export class todoUIState {
 }
 
 
-}
 
 @Observed
 export class timer{
