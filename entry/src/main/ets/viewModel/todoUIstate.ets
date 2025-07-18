@@ -45,7 +45,6 @@ export class todoUIState {
     this.itemList.push(item)
     this.addForTable(item)
   }
-
   private addForTable(item: todoItem){
     if (Object.keys(this.itemTable).includes(item.date)) {
       this.itemTable[item.date].totalCount += 1
@@ -95,13 +94,12 @@ export class todoUIState {
   //更新新新新新新新新新新新新新新
    immediatelyfreshTotalTime(item: todoItem): void {
     //更新tt，tc
-    this.totalTime += item.duration;
-    this.totalCount += 1;
-    //更新 itemTable
-    this.addForTable(item)
-     toggleTimer(item.duration,undefined,() => this.removeFromTable(item));//第二部分，定时器
+     //removeitem从list里面删除
+     this.itemList.pop()//
+     //更新时长
+     this.totalTime += item.duration;
+     this.totalCount += 1;
   }
-  //
    laterfreshTotalTime(item: todoItem):void{
     // 解析item中的时间（假设item.date格式为YYYY-MM-DD，item.startTime为HH:mm）
     const targetDate = new Date(`${item.date}T${item.startTime}:00`);
@@ -117,10 +115,8 @@ export class todoUIState {
     }
   }
   whenadd(item: todoItem){
-    toggleTimer(timeToSeconds(item.startTime)-timeToSeconds(getFormattedTime()),undefined,() => this.immediatelyfreshTotalTime(item));//创建出了定时器
-    formatTime(item.duration);//数据显示
-    //toggleTimer(item.duration,onsecond(11),this.immediatelyfreshTotalTime(item));
-    toggleTimer(item.duration);
+    this.addItem(item);
+    setInterval(() => this.immediatelyfreshTotalTime(item),timeToSeconds(item.startTime)-timeToSeconds(getFormattedTime()),undefined);//创建出了定时器
 
   }
 
