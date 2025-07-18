@@ -21,8 +21,8 @@ export class todoUIState {
       todoUIState.instance = new todoUIState(context);
     }
     return todoUIState.instance;
-  }
 
+  }
   constructor(context: Context) {
     this.isLoadState = false
     this.pref = preferences.getPreferencesSync(context, {
@@ -44,6 +44,13 @@ export class todoUIState {
   addItem(item: todoItem) {
     this.itemList.push(item)
     this.addForTable(item)
+  }
+  deleteItem(item: todoItem) {
+    //使用 filter 过滤掉匹配 title 和 date 的项，并更新 itemList
+    const deletedItemCopy = item;
+    this.itemList = this.itemList.filter(
+      (waitItem) => waitItem.title !== item.title || waitItem.date !== item.date
+    );
   }
   private addForTable(item: todoItem){
     if (Object.keys(this.itemTable).includes(item.date)) {
@@ -95,11 +102,16 @@ export class todoUIState {
    immediatelyfreshTotalTime(item: todoItem): void {
     //更新tt，tc
      //removeitem从list里面删除
-     this.itemList.pop()//
-     //更新时长
+     this.deleteItem(item);
+     //启动计时器
+     toggleTimer(item.duration,undefined, onEnd: () => void = () => {})
+     //加入finish
+     item.state=true;
+     this.addForTable(item);
      this.totalTime += item.duration;
      this.totalCount += 1;
   }
+
    laterfreshTotalTime(item: todoItem):void{
     // 解析item中的时间（假设item.date格式为YYYY-MM-DD，item.startTime为HH:mm）
     const targetDate = new Date(`${item.date}T${item.startTime}:00`);

@@ -15,8 +15,7 @@ export function timeToSeconds(timeStr: string): number {
   const parts = timeStr.split('-').map(Number);
   const hours = parts[0];
   const minutes = parts[1];
-  const seconds = parts[2];
-  return hours * 3600 + minutes * 60 + seconds;
+  return hours * 3600 + minutes * 60;
 }
 // 获取格式化时间
 export function getFormattedTime(): string {
