@@ -1,7 +1,5 @@
-export function getFormattedDate(): string {
+export function getFormattedDate(date: Date): string {
   // 获取当前时间戳并转换为Date对象
-  const date = new Date();
-
   // 提取并格式化年、月、日
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -10,7 +8,14 @@ export function getFormattedDate(): string {
   // 拼接为日期字符串
   return `${year}-${month}-${day}`;
 }
-
+//时间转换成秒
+export function timeToSeconds(timeStr: string): number {
+  const parts = timeStr.split('-').map(Number);
+  const hours = parts[0];
+  const minutes = parts[1];
+  const seconds = parts[2];
+  return hours * 3600 + minutes * 60 + seconds;
+}
 // 获取格式化时间
 export function getFormattedTime(): string {
   const now = new Date()

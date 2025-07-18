@@ -1,6 +1,5 @@
-//entry/src/main/ets/pages/Index.ets
-import router from '@ohos.router';
 import { BreakpointSystem, BreakpointTypeEnum } from '../utils/BreakpointSystem';
+import { formatTime } from '../utils/DateTimeUtils';
 import { todoUIState } from '../viewModel/todoUIstate';
 import { ProfilePage } from './ProfilePage';
 import { TodoPage } from './TodoPage';
@@ -9,42 +8,30 @@ import { TodoPage } from './TodoPage';
 @Component
 struct Index {
   @StorageProp('currentBreakpoint') currentBreakpoint: string = BreakpointTypeEnum.MD;
-  // “持有者”，需要初值
-  @StorageProp('timerRunning') running: boolean = false;
   @State currentIndex: number = 0;
   private tabsController: TabsController = new TabsController();
   private breakpointSystem: BreakpointSystem = new BreakpointSystem();
-  @State viewModel: todoUIState =
-    todoUIState.getInstance(AppStorage.get('Context') as Context);
+  @State viewModel: todoUIState = todoUIState.getInstance(AppStorage.get('Context') as Context);
 
-  private timerListener: number = -1;
-
-  /* 用于 off() 的同一个回调引用 */
-  private readonly onTimerRunning = (val: boolean) => {
-    this.running = val;
-    if (val) {
-      this.currentIndex = 0;
-      this.tabsController.changeIndex(0);
+  onBackPress(): boolean {
+    if (this.viewModel.isRunning) {
+      console.log('test')
+      return true // 拦截返回键
     }
-  };
-
+    return false // 放行返回键
+  }
 
   aboutToAppear() {
-    const ctx = AppStorage.get('Context') as Context;
-
-    ctx.eventHub.on('onSaveEvent', () => this.viewModel.saveData());
+    const context = AppStorage.get('Context') as Context
+    // 注册持久化保存监听
+    context.eventHub.on('onSaveEvent', () => {
+      this.viewModel.saveData();
+    });
     this.breakpointSystem.register();
-
-    /* 注册计时事件 */
-    ctx.eventHub.on('TIMER_RUNNING', this.onTimerRunning);
   }
 
   aboutToDisappear() {
     this.breakpointSystem.unregister();
-    const ctx = AppStorage.get('Context') as Context;
-
-    /* 取消计时事件 */
-    ctx.eventHub.off('TIMER_RUNNING', this.onTimerRunning);
   }
 
   @Builder
@@ -53,7 +40,7 @@ struct Index {
       Image(selectedIcon)
         .width(24)
         .height(24)
-        .fillColor(this.currentIndex === targetIndex ? '#0A59F7' : 'rgba(0,0,0,0.60)')
+        .fillColor(this.currentIndex === targetIndex? '#0A59F7' : 'rgba(0,0,0,0.60)')
       Text(title)
         .fontFamily('HarmonyHeiTi-Medium')
         .fontSize(10)
@@ -72,33 +59,62 @@ struct Index {
     })
   }
 
-  // Index.ets 只改 build() 这一段，其余保持不变
   build() {
-    if (this.running) {               // 计时中
+    if(this.viewModel.isRunning){
       Stack() {
+        // 1. 背景图片层
         Image($r('app.media.test'))
-          .width('100%').height('100%')
           .objectFit(ImageFit.Cover)
+          .width('100%')
+          .height('100%')
+          .backgroundColor('#fffffdfd')
+          .borderRadius(20)
+          .shadow({ radius: 10, color: Color.Gray, offsetX: 0, offsetY: 5 })
 
-        TodoPage({ viewModel: this.viewModel })   // 叠倒计时
+        // 倒计时显示
+        Text(formatTime(this.viewModel.showSeconds))
+          .fontSize(36)
+          .fontWeight(FontWeight.Bold)
+          .fontColor("#333")
+
+        // 进度条
+        Progress({
+          value: 100 - (this.viewModel.showSeconds / (this.viewModel.focusMinutes * 60)) * 100,
+          style: ProgressStyle.Ring
+        })
+          .width(150)
+          .height(150)
+          .color(this.viewModel.ringColor)
+          .animation({ duration: 1000, curve: "easeOut" })
       }
-      .width('100%').height('100%')
-
-    } else {                          // 平时
+      .width('100%')
+      .height('100%')
+      .alignContent(Alignment.Center)
+    }else{
       Tabs({
-        barPosition: this.currentBreakpoint === BreakpointTypeEnum.LG
-          ? BarPosition.Start : BarPosition.End,
+        barPosition: this.currentBreakpoint === BreakpointTypeEnum.LG ?
+        BarPosition.Start :
+        BarPosition.End,
         controller: this.tabsController
       }) {
-        /* 两个 TabContent 同前 */
+        TabContent() {
+          TodoPage({viewModel: this.viewModel})
+        }
+        .tabBar(this.tabBarBuilder('待办', 0, $r("app.media.format_list_checks")))
+
+        TabContent() {
+          ProfilePage({viewModel: this.viewModel})
+        }
+        .tabBar(this.tabBarBuilder('我的', 1, $r("app.media.account_outline")))
       }
-      .vertical(this.currentBreakpoint === BreakpointTypeEnum.LG)
-      .divider({ strokeWidth: 0.5, color: '#0D182431' })
+      .vertical(this.currentBreakpoint === BreakpointTypeEnum.LG ? true : false)
+      .divider({
+        strokeWidth: 0.5,
+        color: '#0D182431'
+      })
       .scrollable(false)
       .backgroundColor('#F1F3F5')
-      .width('100%').height('100%')
+      .padding({ top: '0.00vp', right: '0.00vp', bottom: '0.00vp', left: '0.00vp' })
     }
   }
-
-
 }

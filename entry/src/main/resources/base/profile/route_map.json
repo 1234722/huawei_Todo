@@ -1,0 +1,14 @@
+{
+  "routerMap": [
+    {
+      "name": "FocusRecord",
+      "pageSourceFile": "src/main/ets/pages/CalendarPage.ets",
+      "buildFunction": "a"
+    },
+    {
+      "name": "FocusStats",
+      "pageSourceFile": "src/main/ets/pages/StatsPage.ets",
+      "buildFunction": "b"
+    }
+  ]
+}
