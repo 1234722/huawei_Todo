@@ -4,7 +4,6 @@ import { BreakpointSystem, BreakpointTypeEnum } from '../utils/BreakpointSystem'
 import { todoUIState } from '../viewModel/todoUIstate';
 import { ProfilePage } from './ProfilePage';
 import { TodoPage } from './TodoPage';
-
 @Entry
 @Component
 struct Index {
@@ -28,6 +27,13 @@ struct Index {
     }
   };
 
+
+  onBackPress(): boolean {
+    if (this.viewModel.timer.isRunning) {
+      return true // 拦截返回键
+    }
+    return false // 放行返回键
+  }
 
   aboutToAppear() {
     const ctx = AppStorage.get('Context') as Context;
