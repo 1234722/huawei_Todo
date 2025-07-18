@@ -76,24 +76,13 @@ export class todoUIState {
       dateGroup.totalTime -= item.duration;
 
       if (item.state) {
-        // 从 finishItem 中移除（通过 filter 过滤匹配项）
         dateGroup.finishItem = dateGroup.finishItem.filter(
           i => !(i.title === item.title && i.startTime === item.startTime)
         );
       } else {
-        // 从 waitItem 中移除
         dateGroup.waitItem = dateGroup.waitItem.filter(
           i => !(i.title === item.title && i.startTime === item.startTime)
         );
-      }
-      // 如果该日期的项目数为 0，则移除整个日期键（赋值为 undefined）
-      if (dateGroup.totalCount === 0) {
-        this.itemTable[item.date] = {
-          totalCount: 0,
-          totalTime: 0,
-          waitItem: [],
-          finishItem: []
-        };
       }
     }
   }
