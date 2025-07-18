@@ -11,8 +11,6 @@ export struct TodoPage{
     builder: addDialog()
   })
 
-
-
   build() {
       Column(){
         RelativeContainer(){
@@ -38,7 +36,7 @@ export struct TodoPage{
         .backgroundColor('#539EE1')
         .padding({top: 30})
         TomatoTimer({viewModel: this.viewModel})
-        SelectionView()
+        SelectionView({viewModel: this.viewModel})
       }.width('100%')
       .height('100%')
       .alignItems(HorizontalAlign.Center)

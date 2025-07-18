@@ -2,10 +2,13 @@
 
 import { todoItem } from '../../model/TodoItem'
 import { sampleSelections } from '../../model/TodoItem'; //调用todo数据实例
+import { getFormattedDate } from '../../utils/DateTimeUtils';
+import { todoUIState } from '../../viewModel/todoUIstate';
 
 @Component
 export struct SelectionView {
-  @State selectionList: Array<todoItem> = sampleSelections;
+  @Link viewModel: todoUIState
+  @State selectionList: Array<todoItem> = this.viewModel.itemTable[getFormattedDate(new Date)].waitItem;
 
   build() {
     Column() {

@@ -18,7 +18,6 @@ export function b(){
 @Entry
 @Component
 struct StatsPage {
-
   private pathStack: NavPathStack = new NavPathStack();
 
   /* ---------- 原始记录 ---------- */
