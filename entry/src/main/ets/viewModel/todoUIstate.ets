@@ -46,7 +46,7 @@ export class todoUIState {
   }
   deleteItem(item: todoItem) {
     //使用 filter 过滤掉匹配 title 和 date 的项，并更新 itemList
-    const deletedItemCopy = item;
+    this.removeFromTable(item)
     this.itemList = this.itemList.filter(
       (waitItem) => waitItem.title !== item.title || waitItem.date !== item.date
     );
@@ -102,28 +102,30 @@ export class todoUIState {
     //更新tt，tc
      //removeitem从list里面删除
      this.deleteItem(item);
+     this.isRunning=true;
      //启动计时器
-     toggleTimer(item.duration,undefined, onEnd: () => void = () => {})
+     toggleTimer(item.duration,(now: number) => {
+       this.showSeconds = now
+       if (this.showSeconds <= 0) {
+         this.ringColor = Color.Green; // 设置颜色为绿色
+       } else if (this.showSeconds < this.focusMinutes * 60 * 0.25) {
+         this.ringColor = Color.Red; // 设置颜色为红色
+       } else if (this.showSeconds < this.focusMinutes * 60 * 0.5) {
+         this.ringColor = Color.Orange; // 设置颜色为橙色
+       }
+     },() => {
+       this.isRunning = false // 设置计时器状态为暂停
+       this.ringColor = Color.Green // 设置颜色为绿色
+       this.showSeconds = this.focusMinutes * 60
+       item.state=true;
+       this.addForTable(item);
+       this.addItem(item);
+       this.totalTime += item.duration;
+       this.totalCount += 1;
+     })
+
      //加入finish
-     item.state=true;
-     this.addForTable(item);
-     this.totalTime += item.duration;
-     this.totalCount += 1;
-  }
 
-   laterfreshTotalTime(item: todoItem):void{
-    // 解析item中的时间（假设item.date格式为YYYY-MM-DD，item.startTime为HH:mm）
-    const targetDate = new Date(`${item.date}T${item.startTime}:00`);
-    const currentTime = new Date();
-
-    // 计算时间差
-    const timeDiff = targetDate.getTime() - currentTime.getTime();
-
-    // 如果时间已过，即时执行
-    if (timeDiff <= 0) {
-      this.immediatelyfreshTotalTime(item);
-      return;
-    }
   }
   whenadd(item: todoItem){
     this.addItem(item);
