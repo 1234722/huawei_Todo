@@ -1,4 +1,5 @@
 import { BreakpointSystem, BreakpointTypeEnum } from '../utils/BreakpointSystem';
+import { formatTime } from '../utils/DateTimeUtils';
 import { todoUIState } from '../viewModel/todoUIstate';
 import { ProfilePage } from './ProfilePage';
 import { TodoPage } from './TodoPage';
@@ -51,8 +52,36 @@ struct Index {
   }
 
   build() {
-    if(this.viewModel.timer.isRunning){
+    if(this.viewModel.isRunning){
+            Stack() {
+        // 1. 背景图片层
+        Image($r('app.media.test'))
+          .objectFit(ImageFit.Cover)
+          .width('100%')
+          .height('100%')
+          .backgroundColor('#fffffdfd')
+          .borderRadius(20)
+          .shadow({ radius: 10, color: Color.Gray, offsetX: 0, offsetY: 5 })
 
+        // 倒计时显示
+        Text(formatTime(this.viewModel.showSeconds))
+          .fontSize(36)
+          .fontWeight(FontWeight.Bold)
+          .fontColor("#333")
+
+        // 进度条
+        Progress({
+          value: 100 - (this.viewModel.showSeconds / (this.viewModel.focusMinutes * 60)) * 100,
+          style: ProgressStyle.Ring
+        })
+          .width(150)
+          .height(150)
+          .color(this.viewModel.ringColor)
+          .animation({ duration: 300, curve: "easeOut" })
+      }
+      .width('100%')
+      .height('100%')
+      .alignContent(Alignment.Center)
     }else{
       Tabs({
         barPosition: this.currentBreakpoint === BreakpointTypeEnum.LG ?

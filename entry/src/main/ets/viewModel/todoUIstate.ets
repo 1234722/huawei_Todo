@@ -11,7 +11,6 @@ export class todoUIState {
   @Track itemList: todoItem[] = []
   @Track itemTable: Record<string, oneDayItemList> = {}
   @Track isLoadState: boolean = true
-  @Track timer: timer = new timer()
   private static instance: todoUIState;
   private dataKey = 'todo_data';
   private pref: preferences.Preferences;
@@ -156,10 +155,7 @@ export class todoUIState {
       this.addForTable(item)
     })
   }
-}
 
-@Observed
-export class timer{
   @Track focusMinutes: number = 25
   @Track showSeconds: number = 25 * 60
   @Track isRunning: boolean = false
@@ -188,5 +184,4 @@ export class timer{
     this.focusMinutes = minutes
     this.showSeconds = minutes * 60
   }
-
 }

@@ -12,7 +12,7 @@ export struct TodoPage{
   })
 
   onBackPress(): boolean {
-    if (!this.viewModel.timer.isRunning) {
+    if (this.viewModel.isRunning) {
       console.log('test')
       return true // 拦截返回键
     }
@@ -20,7 +20,6 @@ export struct TodoPage{
   }
 
   build() {
-    if(!this.viewModel.timer.isRunning){
       Column(){
         RelativeContainer(){
           Text('待办').alignRules({
@@ -44,15 +43,11 @@ export struct TodoPage{
         .height(80)
         .backgroundColor('#539EE1')
         .padding({top: 30})
-        TomatoTimer({timer: this.viewModel.timer})
+        TomatoTimer({viewModel: this.viewModel})
         SelectionView()
       }.width('100%')
       .height('100%')
       .alignItems(HorizontalAlign.Center)
       .backgroundColor($r('app.color.white'))
-    }else{
-
-    }
-
   }
 }
