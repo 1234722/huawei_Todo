@@ -3,6 +3,7 @@ import { addDialog } from "./component/AddDialog"
 import { TomatoTimer } from "./component/LockPhone"
 import { SelectionView } from "./component/SelectionView"
 
+
 @Component
 export struct TodoPage{
   @Link viewModel: todoUIState
@@ -10,7 +11,6 @@ export struct TodoPage{
   dialogController: CustomDialogController = new CustomDialogController({
     builder: addDialog()
   })
-
 
 
   build() {

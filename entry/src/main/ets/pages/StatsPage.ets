@@ -15,7 +15,6 @@ export function b(){
 }
 
 /* ---------- 页面组件 ---------- */
-@Entry
 @Component
 struct StatsPage {
 

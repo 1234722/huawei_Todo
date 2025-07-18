@@ -1,10 +1,23 @@
 // CalendarComponent.ets
+import { todoItem } from "../../model/TodoItem";
+import { getFormattedDate } from "../../utils/DateTimeUtils";
+import { todoUIState } from "../../viewModel/todoUIstate";
+import { SelectionItem } from "./SelectionView";
+
 @Preview
 @Component
 export struct CalendarComponent {
+  @Link viewModel: todoUIState
   @State currentDate: Date = new Date();          // 当前显示的月份
   @Link selectedDate: Date         // 用户选中的日期
   @State showDateDialog: boolean = false;        // 是否显示日期对话框
+  @State showItemList: todoItem[] = []
+
+  aboutToAppear(): void {
+    if(this.viewModel.itemTable[getFormattedDate(this.selectedDate)]){
+      this.showItemList = this.viewModel.itemTable[getFormattedDate(this.selectedDate)].finishItem
+    }
+  }
 
 
   // 获取某个月份的天数
@@ -85,6 +98,8 @@ export struct CalendarComponent {
     return grid;
   }
 
+
+
   // 日期对话框构建器
   @Builder
   dateDialogBuilder() {
@@ -94,6 +109,18 @@ export struct CalendarComponent {
         .fontSize(18)
         .fontWeight(FontWeight.Bold)
         .margin({ bottom: 20 })
+
+      List({ space: 10 }) {
+        ForEach(this.showItemList, (item: todoItem) => {
+          ListItem() {
+            SelectionItem({ selectionItem: item })
+          }
+        })
+      }
+      .edgeEffect(EdgeEffect.Spring)
+      .width('100%')
+      .height('100%')
+      .padding({ left: 14, right: 14 })
 
       Button('关闭')
         .backgroundColor('#f0f0f0')

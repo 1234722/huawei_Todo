@@ -1,4 +1,3 @@
-@Entry
 @Component
 struct Todo_widgetCard {
   /*

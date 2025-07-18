@@ -43,7 +43,8 @@ export struct ParentComponent {
 
       // 日历组件
       CalendarComponent({
-        selectedDate: this.parentSelectedDate // 传递选中日期
+        selectedDate: this.parentSelectedDate, // 传递选中日期
+        viewModel: this.viewmodel
       })
         .margin({ bottom: 30 })
 

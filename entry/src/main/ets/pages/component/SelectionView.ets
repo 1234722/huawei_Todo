@@ -27,7 +27,7 @@ export struct SelectionView {
 
 @Preview
 @Component
-struct SelectionItem {
+export struct SelectionItem {
   @Prop selectionItem: todoItem;
 
   build() {
