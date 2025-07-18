@@ -9,12 +9,18 @@ import { getFormattedDate } from '../utils/DateTimeUtils';
 import { FocusRecord } from '../utils/FocusRecord'
 import { todoUIState } from '../viewModel/todoUIstate';
 
-
+@Builder
+export function b(){
+  StatsPage()
+}
 
 /* ---------- 页面组件 ---------- */
 @Entry
 @Component
 struct StatsPage {
+
+  private pathStack: NavPathStack = new NavPathStack();
+
   /* ---------- 原始记录 ---------- */
   private records: FocusRecord[] = [
     { start: Date.now(), duration: 1, giveUp: false }   // ← 毫秒级时间戳, 取当前设备时间
@@ -223,6 +229,8 @@ struct StatsPage {
 
   /* ---------- UI ---------- */
   build() {
+    NavDestination() {
+
     Scroll() {
       Column() {
         Row(){
@@ -334,6 +342,10 @@ struct StatsPage {
       .padding({ left: 12, right: 12, top: 12 , bottom:12})
       .backgroundColor("#7E6BEB")
     }
+  }.title('专注统计')
+    .onReady((context: NavDestinationContext) => {
+      this.pathStack = context.pathStack; // 获取导航栈引用
+    })
   }
 }
 

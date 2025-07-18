@@ -2,7 +2,7 @@
 import { oneDayItemList, todoItem } from "../model/TodoItem";
 import { preferences } from "@kit.ArkData";
 import { BusinessError } from "@kit.BasicServicesKit";
-import { getFormattedTime, toggleTimer } from "../utils/DateTimeUtils";
+import { formatTime, getFormattedTime, timeToSeconds, toggleTimer } from "../utils/DateTimeUtils";
 
 @Observed
 export class todoUIState {

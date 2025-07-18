@@ -51,29 +51,33 @@ struct Index {
   }
 
   build() {
-    Tabs({
-      barPosition: this.currentBreakpoint === BreakpointTypeEnum.LG ?
-      BarPosition.Start :
-      BarPosition.End,
-      controller: this.tabsController
-    }) {
-      TabContent() {
-        TodoPage({viewModel: this.viewModel})
-      }
-      .tabBar(this.tabBarBuilder('待办', 0, $r("app.media.format_list_checks")))
+    if(this.viewModel.timer.isRunning){
 
-      TabContent() {
-        ProfilePage({viewModel: this.viewModel})
+    }else{
+      Tabs({
+        barPosition: this.currentBreakpoint === BreakpointTypeEnum.LG ?
+        BarPosition.Start :
+        BarPosition.End,
+        controller: this.tabsController
+      }) {
+        TabContent() {
+          TodoPage({viewModel: this.viewModel})
+        }
+        .tabBar(this.tabBarBuilder('待办', 0, $r("app.media.format_list_checks")))
+
+        TabContent() {
+          ProfilePage({viewModel: this.viewModel})
+        }
+        .tabBar(this.tabBarBuilder('我的', 1, $r("app.media.account_outline")))
       }
-      .tabBar(this.tabBarBuilder('我的', 1, $r("app.media.account_outline")))
+      .vertical(this.currentBreakpoint === BreakpointTypeEnum.LG ? true : false)
+      .divider({
+        strokeWidth: 0.5,
+        color: '#0D182431'
+      })
+      .scrollable(false)
+      .backgroundColor('#F1F3F5')
+      .padding({ top: '0.00vp', right: '0.00vp', bottom: '0.00vp', left: '0.00vp' })
     }
-    .vertical(this.currentBreakpoint === BreakpointTypeEnum.LG ? true : false)
-    .divider({
-      strokeWidth: 0.5,
-      color: '#0D182431'
-    })
-    .scrollable(false)
-    .backgroundColor('#F1F3F5')
-    .padding({ top: '0.00vp', right: '0.00vp', bottom: '0.00vp', left: '0.00vp' })
   }
 }

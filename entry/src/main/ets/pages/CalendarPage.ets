@@ -1,10 +1,16 @@
 // ParentComponent.ets
 import { CalendarComponent } from './component/CalendarComponent'
-@Preview
+
+@Builder
+export function a(){
+  ParentComponent()
+}
 
 @Component
-struct ParentComponent {
+export struct ParentComponent {
   @State parentSelectedDate: Date = new Date(); // 父组件维护的选中日期状态
+
+  private pathStack: NavPathStack = new NavPathStack();
 
   // 格式化日期显示
   private formatDate(date: Date): string {
@@ -24,6 +30,7 @@ struct ParentComponent {
   }
 
   build() {
+    NavDestination() {
     Column() {
       // 页面标题
       Text('我的日历')
@@ -101,5 +108,9 @@ struct ParentComponent {
     .height('100%')
     .padding(20)
     .backgroundColor('#f5f5f5')
+  }.title('专注记录')
+    .onReady((context: NavDestinationContext) => {
+      this.pathStack = context.pathStack; // 获取导航栈引用
+    })
   }
 }
