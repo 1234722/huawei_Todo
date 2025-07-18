@@ -1,11 +1,11 @@
-// ParentComponent.ets
+import { todoUIState } from '../viewModel/todoUIstate';
 import { CalendarComponent } from './component/CalendarComponent'
 @Preview
 
 @Component
 struct ParentComponent {
   @State parentSelectedDate: Date = new Date(); // 父组件维护的选中日期状态
-
+ @Link viewmodel: todoUIState
   // 格式化日期显示
   private formatDate(date: Date): string {
     return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
