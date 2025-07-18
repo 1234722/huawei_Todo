@@ -11,13 +11,7 @@ export struct TodoPage{
     builder: addDialog()
   })
 
-  onBackPress(): boolean {
-    if (this.viewModel.isRunning) {
-      console.log('test')
-      return true // 拦截返回键
-    }
-    return false // 放行返回键
-  }
+
 
   build() {
       Column(){

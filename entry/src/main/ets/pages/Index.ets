@@ -13,6 +13,14 @@ struct Index {
   private breakpointSystem: BreakpointSystem = new BreakpointSystem();
   @State viewModel: todoUIState = todoUIState.getInstance(AppStorage.get('Context') as Context);
 
+  onBackPress(): boolean {
+    if (this.viewModel.isRunning) {
+      console.log('test')
+      return true // 拦截返回键
+    }
+    return false // 放行返回键
+  }
+
   aboutToAppear() {
     const context = AppStorage.get('Context') as Context
     // 注册持久化保存监听
@@ -53,7 +61,7 @@ struct Index {
 
   build() {
     if(this.viewModel.isRunning){
-            Stack() {
+      Stack() {
         // 1. 背景图片层
         Image($r('app.media.test'))
           .objectFit(ImageFit.Cover)
@@ -77,7 +85,7 @@ struct Index {
           .width(150)
           .height(150)
           .color(this.viewModel.ringColor)
-          .animation({ duration: 300, curve: "easeOut" })
+          .animation({ duration: 1000, curve: "easeOut" })
       }
       .width('100%')
       .height('100%')
