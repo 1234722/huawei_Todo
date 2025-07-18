@@ -3,12 +3,11 @@ import { addDialog } from "./component/AddDialog"
 import { TomatoTimer } from "./component/LockPhone"
 import { SelectionView } from "./component/SelectionView"
 
-@Preview
 @Component
 export struct TodoPage{
   @Link viewModel: todoUIState
 
-  dialog2Controller: CustomDialogController = new CustomDialogController({
+  dialogController: CustomDialogController = new CustomDialogController({
     builder: addDialog()
   })
 
@@ -38,7 +37,7 @@ export struct TodoPage{
           .height(30)
           .fillColor($r('app.color.white'))
           .onClick(() => {
-            this.dialog2Controller.open()
+            this.dialogController.open()
           })
       }.width('100%')
       .height(80)
