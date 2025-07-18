@@ -10,6 +10,7 @@ export function a(){
 @Component
 export struct ParentComponent {
   @State parentSelectedDate: Date = new Date(); // 父组件维护的选中日期状态
+  @Link viewmodel:todoUIState
 
   private pathStack: NavPathStack = new NavPathStack();
 
