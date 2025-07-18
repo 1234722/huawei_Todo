@@ -1,9 +1,23 @@
 import { todoUIState } from "../viewModel/todoUIstate"
+import { addDialog } from "./component/AddDialog"
 import { TomatoTimer } from "./component/LockPhone"
-@Preview
+import { SelectionView } from "./component/SelectionView"
+
 @Component
 export struct TodoPage{
   @Link viewModel: todoUIState
+
+  dialogController: CustomDialogController = new CustomDialogController({
+    builder: addDialog()
+  })
+
+  onBackPress(): boolean {
+    console.log('test')
+    if (!this.viewModel.timer.isRunning) {
+      return true // 拦截返回键
+    }
+    return false // 放行返回键
+  }
 
   build() {
     Column(){
@@ -23,13 +37,14 @@ export struct TodoPage{
           .height(30)
           .fillColor($r('app.color.white'))
           .onClick(() => {
-
+            this.dialogController.open()
           })
       }.width('100%')
       .height(80)
       .backgroundColor('#539EE1')
       .padding({top: 30})
       TomatoTimer({timer: this.viewModel.timer})
+      SelectionView()
     }.width('100%')
     .height('100%')
     .alignItems(HorizontalAlign.Center)

@@ -1,14 +1,15 @@
 //entry\src\main\ets\pages\StatsPage.ets
 import { VChart } from '@visactor/harmony-vchart'
 import {
+  AnimationNormalSpec,
   BarData,
   BarShape,
-  BarSpec, BarValue, DayPoint, LineSpec, MonthPoint,
-  PaddingSpec,
-  PieData, PieSpec } from '../model/DateMapInterface';
+  BarSpec, BarValue, DayPoint, LineSpec, MonthPoint, PieData, PieSpec } from '../model/DateMapInterface';
 import { getFormattedDate } from '../utils/DateTimeUtils';
 import { FocusRecord } from '../utils/FocusRecord'
 import { todoUIState } from '../viewModel/todoUIstate';
+
+
 
 /* ---------- 页面组件 ---------- */
 @Entry
@@ -26,7 +27,7 @@ struct StatsPage {
   private avgPerDay    = this.totalCount > 0 ? this.totalMinutes / this.totalCount : 0   // 防 0 改为累计每次平均时间，但变量名未改
 
   /* —— 今日 —— */
-  private todayKey     = getFormattedDate(Date.now())
+  private todayKey     = getFormattedDate()
   private todayStats   = this.viewModel.itemTable[this.todayKey]   // 可能为 undefined
 
   private todayCount   = this.todayStats?.totalCount ?? 0

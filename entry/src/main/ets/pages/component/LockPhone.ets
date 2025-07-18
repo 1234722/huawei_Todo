@@ -1,9 +1,14 @@
 import { formatTime, getFormattedTime } from '../../utils/DateTimeUtils'
 import { timer } from '../../viewModel/todoUIstate'
+import { addDialog, customDialog } from './AddDialog'
 
 @Component
 export struct TomatoTimer {
   @ObjectLink timer: timer
+
+  // dialog3Controller: CustomDialogController = new CustomDialogController({
+  //   builder: addDialog()
+  // })
 
   build() {
     Column() {
@@ -56,10 +61,12 @@ export struct TomatoTimer {
             .width(90)
             .margin(5)
 
-          Button('5分钟', { type: ButtonType.Capsule, stateEffect: true })
-            .backgroundColor(this.timer.focusMinutes === 5 ? '#5B8FF9' : '#F0F0F0')
-            .fontColor(this.timer.focusMinutes === 5 ? Color.White : '#333')
-            .onClick(() => this.timer.setFocusTime(1))
+          TextInput({ text: this.timer.focusMinutes.toString(), placeholder: '自定义分钟'})
+            .onChange((value: string) => {
+              if(Number.isNaN(parseInt(value))){
+                this.timer.focusMinutes = parseInt(value) // 将输入的字符串转换为数字类型
+              }
+            })
             .width(90)
             .margin(5)
         }
@@ -74,7 +81,6 @@ export struct TomatoTimer {
       }
     }
     .width('100%')
-    .height('100%')
     .backgroundColor('#F5F7FA')
     .alignItems(HorizontalAlign.Center)
   }
