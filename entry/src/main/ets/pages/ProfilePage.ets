@@ -45,32 +45,50 @@ export struct ProfilePage {
 
         // 添加导航项
         Column() {
-          Button("专注记录")
-            .fontFamily('HarmonyHeiTi-Bold')
-            .fontSize(24)
-            .fontWeight(500)
-            .fontColor('#5381B4')
-            .padding(10)
-            .backgroundColor('#D6E7F3')
-            .width('100%')
-            .borderRadius(10)
-            .margin({ bottom: 10 })
-            .onClick(() => {
-              //Push the NavDestination page information specified by name onto the stack, and pass the data as param.
-              this.pageInfos.pushPathByName('FocusRecord', null);
-            })
-          Button("专注统计")
-            .fontFamily('HarmonyHeiTi-Bold')
-            .fontSize(24)
-            .fontWeight(500)
-            .fontColor('#5381B4')
-            .padding(10)
-            .backgroundColor('#D6E7F3')
-            .width('100%')
-            .borderRadius(10)
-            .onClick(() => {
-              this.pageInfos.pushPathByName('FocusStats', null);
-            })
+          /* ---------- 专注记录 ---------- */
+          Button() {
+            Row() {
+              Image($r('app.media.first'))           // AppScope/resources/base/media/first.svg
+                .width(24)
+                .height(24)
+                .margin({ right: 8 })
+
+              Text('专注记录')
+                .fontFamily('HarmonyHeiTi-Bold')
+                .fontSize(24)
+                .fontWeight(500)
+                .fontColor('#5381B4')
+            }
+          }
+          .padding(10)
+          .backgroundColor('#D6E7F3')
+          .width('100%')
+          .borderRadius(10)
+          .margin({ bottom: 10 })
+          .onClick(() => {
+            this.pageInfos.pushPathByName('FocusRecord', null)
+          })
+          Button() {
+            Row() {
+              Image($r('app.media.second'))          // AppScope/resources/base/media/second.svg
+                .width(24)
+                .height(24)
+                .margin({ right: 8 })
+
+              Text('专注统计')
+                .fontFamily('HarmonyHeiTi-Bold')
+                .fontSize(24)
+                .fontWeight(500)
+                .fontColor('#5381B4')
+            }
+          }
+          .padding(10)
+          .backgroundColor('#D6E7F3')
+          .width('100%')
+          .borderRadius(10)
+          .onClick(() => {
+            this.pageInfos.pushPathByName('FocusStats', null)
+          })
         }
         .width('95%')
         .margin({ top: 20 })
