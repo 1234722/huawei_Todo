@@ -2,7 +2,7 @@
 import { oneDayItemList, todoItem } from "../model/TodoItem";
 import { preferences } from "@kit.ArkData";
 import { BusinessError } from "@kit.BasicServicesKit";
-import { toggleTimer } from "../utils/DateTimeUtils";
+import { getFormattedTime, toggleTimer } from "../utils/DateTimeUtils";
 
 @Observed
 export class todoUIState {
@@ -13,6 +13,7 @@ export class todoUIState {
   @Track isLoadState: boolean = true
   @Track timer: timer = new timer()
   private static instance: todoUIState;
+  private dataKey = 'todo_data';
   private pref: preferences.Preferences;
 
   static getInstance(context: Context): todoUIState {
@@ -38,6 +39,8 @@ export class todoUIState {
     })
   }
 
+
+
   addItem(item: todoItem) {
     this.itemList.push(item)
     this.addForTable(item)
@@ -45,9 +48,9 @@ export class todoUIState {
 
   private addForTable(item: todoItem){
     if (Object.keys(this.itemTable).includes(item.date)) {
+      this.itemTable[item.date].totalCount += 1
+      this.itemTable[item.date].totalTime += item.duration
       if (item.state) {
-        this.itemTable[item.date].totalCount += 1
-        this.itemTable[item.date].totalTime += item.duration
         this.itemTable[item.date].finishItem.push(item)
       } else {
         this.itemTable[item.date].waitItem.push(item)
@@ -60,6 +63,65 @@ export class todoUIState {
         waitItem: item.state ? [] : [item]
       }
     }
+  }
+  private removeFromTable(item: todoItem): void {
+    if (this.itemTable[item.date]) {
+      const dateGroup = this.itemTable[item.date];
+      dateGroup.totalCount -= 1;
+      dateGroup.totalTime -= item.duration;
+
+      if (item.state) {
+        // 从 finishItem 中移除（通过 filter 过滤匹配项）
+        dateGroup.finishItem = dateGroup.finishItem.filter(
+          i => !(i.title === item.title && i.startTime === item.startTime)
+        );
+      } else {
+        // 从 waitItem 中移除
+        dateGroup.waitItem = dateGroup.waitItem.filter(
+          i => !(i.title === item.title && i.startTime === item.startTime)
+        );
+      }
+      // 如果该日期的项目数为 0，则移除整个日期键（赋值为 undefined）
+      if (dateGroup.totalCount === 0) {
+        this.itemTable[item.date] = {
+          totalCount: 0,
+          totalTime: 0,
+          waitItem: [],
+          finishItem: []
+        };
+      }
+    }
+  }
+  //更新新新新新新新新新新新新新新
+   immediatelyfreshTotalTime(item: todoItem): void {
+    //更新tt，tc
+    this.totalTime += item.duration;
+    this.totalCount += 1;
+    //更新 itemTable
+    this.addForTable(item)
+     toggleTimer(item.duration,undefined,() => this.removeFromTable(item));//第二部分，定时器
+  }
+  //
+   laterfreshTotalTime(item: todoItem):void{
+    // 解析item中的时间（假设item.date格式为YYYY-MM-DD，item.startTime为HH:mm）
+    const targetDate = new Date(`${item.date}T${item.startTime}:00`);
+    const currentTime = new Date();
+
+    // 计算时间差
+    const timeDiff = targetDate.getTime() - currentTime.getTime();
+
+    // 如果时间已过，即时执行
+    if (timeDiff <= 0) {
+      this.immediatelyfreshTotalTime(item);
+      return;
+    }
+  }
+  whenadd(item: todoItem){
+    toggleTimer(timeToSeconds(item.startTime)-timeToSeconds(getFormattedTime()),undefined,() => this.immediatelyfreshTotalTime(item));//创建出了定时器
+    formatTime(item.duration);//数据显示
+    //toggleTimer(item.duration,onsecond(11),this.immediatelyfreshTotalTime(item));
+    toggleTimer(item.duration);
+
   }
 
   saveData(): void {

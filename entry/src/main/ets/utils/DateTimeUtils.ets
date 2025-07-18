@@ -10,7 +10,14 @@ export function getFormattedDate(): string {
   // 拼接为日期字符串
   return `${year}-${month}-${day}`;
 }
-
+//时间转换成秒
+export function timeToSeconds(timeStr: string): number {
+  const parts = timeStr.split('-').map(Number);
+  const hours = parts[0];
+  const minutes = parts[1];
+  const seconds = parts[2];
+  return hours * 3600 + minutes * 60 + seconds;
+}
 // 获取格式化时间
 export function getFormattedTime(): string {
   const now = new Date()
