@@ -11,7 +11,6 @@ export class todoUIState {
   @Track itemList: todoItem[] = []
   @Track itemTable: Record<string, oneDayItemList> = {}
   @Track isLoadState: boolean = true
-  @Track timer: timer = new timer()
   private static instance: todoUIState;
   private dataKey = 'todo_data';
   private pref: preferences.Preferences;
@@ -63,8 +62,8 @@ export class todoUIState {
       }
     } else {
       this.itemTable[item.date] = {
-        totalCount: 1,
-        totalTime: item.duration,
+        totalCount: item.state ? 1 : 0,
+        totalTime: item.state ? item.duration : 0,
         finishItem: item.state ? [item] : [],
         waitItem: item.state ? [] : [item]
       }
@@ -138,7 +137,7 @@ export class todoUIState {
   }
 
   private loadData(callback: (result: todoItem[]) => void) {
-    this.pref.get('itemList', '[]', (err: BusinessError, val: preferences.ValueType) => {
+    this.pref.get('itemList', 'default', (err: BusinessError, val: preferences.ValueType) => {
       if (err) {
         console.error("Failed to get value of 'startup'. code =" + err.code + ", message =" + err.message);
         return;
@@ -164,15 +163,11 @@ export class todoUIState {
       this.addForTable(item)
     })
   }
-}
 
-@Observed
-export class timer{
   @Track focusMinutes: number = 25
   @Track showSeconds: number = 25 * 60
   @Track isRunning: boolean = false
   @Track ringColor: Color = Color.Blue
-  private timeUpdateId: number = -1
 
   startTimer() {
     this.isRunning = true // 设置计时器状态为暂停
@@ -197,9 +192,4 @@ export class timer{
     this.focusMinutes = minutes
     this.showSeconds = minutes * 60
   }
-
-}
-
-function ebug(arg0: string): string {
-  throw new Error("Function not implemented.");
 }

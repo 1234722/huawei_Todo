@@ -1,7 +1,9 @@
 import { BreakpointSystem, BreakpointTypeEnum } from '../utils/BreakpointSystem';
+import { formatTime } from '../utils/DateTimeUtils';
 import { todoUIState } from '../viewModel/todoUIstate';
 import { ProfilePage } from './ProfilePage';
 import { TodoPage } from './TodoPage';
+
 @Entry
 @Component
 struct Index {
@@ -12,7 +14,8 @@ struct Index {
   @State viewModel: todoUIState = todoUIState.getInstance(AppStorage.get('Context') as Context);
 
   onBackPress(): boolean {
-    if (this.viewModel.timer.isRunning) {
+    if (this.viewModel.isRunning) {
+      console.log('test')
       return true // 拦截返回键
     }
     return false // 放行返回键
@@ -57,29 +60,61 @@ struct Index {
   }
 
   build() {
-    Tabs({
-      barPosition: this.currentBreakpoint === BreakpointTypeEnum.LG ?
-      BarPosition.Start :
-      BarPosition.End,
-      controller: this.tabsController
-    }) {
-      TabContent() {
-        TodoPage({viewModel: this.viewModel})
-      }
-      .tabBar(this.tabBarBuilder('待办', 0, $r("app.media.format_list_checks")))
+    if(this.viewModel.isRunning){
+      Stack() {
+        // 1. 背景图片层
+        Image($r('app.media.test'))
+          .objectFit(ImageFit.Cover)
+          .width('100%')
+          .height('100%')
+          .backgroundColor('#fffffdfd')
+          .borderRadius(20)
+          .shadow({ radius: 10, color: Color.Gray, offsetX: 0, offsetY: 5 })
 
-      TabContent() {
-        ProfilePage({viewModel: this.viewModel})
+        // 倒计时显示
+        Text(formatTime(this.viewModel.showSeconds))
+          .fontSize(36)
+          .fontWeight(FontWeight.Bold)
+          .fontColor("#333")
+
+        // 进度条
+        Progress({
+          value: 100 - (this.viewModel.showSeconds / (this.viewModel.focusMinutes * 60)) * 100,
+          style: ProgressStyle.Ring
+        })
+          .width(150)
+          .height(150)
+          .color(this.viewModel.ringColor)
+          .animation({ duration: 1000, curve: "easeOut" })
       }
-      .tabBar(this.tabBarBuilder('我的', 1, $r("app.media.account_outline")))
+      .width('100%')
+      .height('100%')
+      .alignContent(Alignment.Center)
+    }else{
+      Tabs({
+        barPosition: this.currentBreakpoint === BreakpointTypeEnum.LG ?
+        BarPosition.Start :
+        BarPosition.End,
+        controller: this.tabsController
+      }) {
+        TabContent() {
+          TodoPage({viewModel: this.viewModel})
+        }
+        .tabBar(this.tabBarBuilder('待办', 0, $r("app.media.format_list_checks")))
+
+        TabContent() {
+          ProfilePage({viewModel: this.viewModel})
+        }
+        .tabBar(this.tabBarBuilder('我的', 1, $r("app.media.account_outline")))
+      }
+      .vertical(this.currentBreakpoint === BreakpointTypeEnum.LG ? true : false)
+      .divider({
+        strokeWidth: 0.5,
+        color: '#0D182431'
+      })
+      .scrollable(false)
+      .backgroundColor('#F1F3F5')
+      .padding({ top: '0.00vp', right: '0.00vp', bottom: '0.00vp', left: '0.00vp' })
     }
-    .vertical(this.currentBreakpoint === BreakpointTypeEnum.LG ? true : false)
-    .divider({
-      strokeWidth: 0.5,
-      color: '#0D182431'
-    })
-    .scrollable(false)
-    .backgroundColor('#F1F3F5')
-    .padding({ top: '0.00vp', right: '0.00vp', bottom: '0.00vp', left: '0.00vp' })
   }
 }

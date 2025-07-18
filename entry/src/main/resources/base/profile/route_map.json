@@ -2,13 +2,13 @@
   "routerMap": [
     {
       "name": "FocusRecord",
-      "pageSourceFile": "src/main/ets/pages/FocusRecordPage.ets",
-      "buildFunction": "FocusRecordBuilder"
+      "pageSourceFile": "src/main/ets/pages/CalendarPage.ets",
+      "buildFunction": "a"
     },
     {
       "name": "FocusStats",
-      "pageSourceFile": "src/main/ets/pages/FocusStatsPage.ets",
-      "buildFunction": "FocusStatsBuilder"
+      "pageSourceFile": "src/main/ets/pages/StatsPage.ets",
+      "buildFunction": "b"
     }
   ]
 }

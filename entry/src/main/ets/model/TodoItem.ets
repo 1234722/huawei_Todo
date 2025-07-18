@@ -18,3 +18,9 @@ export class oneDayItemList{
   waitItem: todoItem[] = []
   finishItem: todoItem[] = []
 }
+
+export const sampleSelections: todoItem[] = [
+  { title: "晨跑锻炼", date: '', startTime: "06:30", duration: 30, experience: ' ', state: false },
+  { title: "项目会议", date: '', startTime: "09:00", duration: 60, experience: ' ', state: false },
+  { title: "午餐休息", date: '', startTime: "12:00", duration: 45, experience: ' ', state: false }
+]

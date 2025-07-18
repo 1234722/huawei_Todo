@@ -1,7 +1,5 @@
-export function getFormattedDate(): string {
+export function getFormattedDate(date: Date): string {
   // 获取当前时间戳并转换为Date对象
-  const date = new Date();
-
   // 提取并格式化年、月、日
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -42,6 +40,7 @@ export function toggleTimer(duration: number, onSeconds: (now: number) => void =
     if (remainingTime <= 0) {
       clearInterval(timerId) // 清除计时器
       onEnd()
+
     }
   }, 1000) // 设置定时器间隔为1秒
 }

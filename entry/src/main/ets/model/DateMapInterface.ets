@@ -28,6 +28,8 @@ export interface BarSpec {
   bar?: BarShape
   barWidth?: number
   barGapInGroup?: number
+
+  animationNormal?: AnimationNormalSpec
 }
 
 export interface LineSpec<T> {
@@ -61,4 +63,36 @@ export interface BarStyle {     // 颜色、圆角
 }
 export interface BarShape {     // VChart 里 bar.style
   style?: BarStyle
+}
+//柱状图的动画用的
+/* ---------- 动画类型 ---------- */
+export interface OpacityKeyframe {
+  to: number          // 目标透明度
+}
+
+export interface ChannelEffects {
+  fillOpacity?: OpacityKeyframe
+}
+
+export interface AnimationEffect {
+  channel?: ChannelEffects
+  easing?: string
+}
+
+export interface TimeSlice {
+  delay?: number
+  effects: AnimationEffect
+  duration: number
+}
+
+export interface BarAnimationItem {
+  loop?: boolean
+  startTime?: number
+  oneByOne?: number
+  timeSlices: TimeSlice[]
+}
+
+/* 整体动画规范：目前只声明 bar，但可拓展 line、area… */
+export interface AnimationNormalSpec {
+  bar: BarAnimationItem[]
 }
